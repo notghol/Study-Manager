@@ -1,8 +1,9 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, font
 from tkmacosx import Button
 from datetime import datetime
 import customtkinter as ctk
+from tkcalendar import Calendar
 
 class StudyManagerApp():
     def __init__(self):
@@ -20,11 +21,18 @@ class StudyManagerApp():
         self.app_frame = Frame(bg="#F8F5F2")
         self.app_frame.grid(sticky=NSEW)
         self.app_frame.grid_columnconfigure(0, weight=1)
+        self.app_frame.grid_columnconfigure(1, weight=1)
+
+
     
         self.button_frame = Frame(self.app_frame,
                                   bg="#F8F5F2")
-        self.button_frame.grid(row=0, column=0, sticky="ew")
-        self.button_frame.grid_columnconfigure(2, weight=1) 
+        self.button_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
+        self.button_frame.grid_columnconfigure(0, weight=0)
+        self.button_frame.grid_columnconfigure(1, weight=0)
+        self.button_frame.grid_columnconfigure(2, weight=1)  
+
+
         
         self.save_button = Button(self.button_frame,
                                 text="Save",
@@ -50,7 +58,7 @@ class StudyManagerApp():
         self.db_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
         
         self.db_holder = Frame(self.app_frame, bg="#F8F5F2")
-        self.db_holder.grid(row=2, column=0, sticky=NSEW)
+        self.db_holder.grid(row=2, column=0, sticky="nw")
 
         self.db_task_frame = ctk.CTkFrame(self.db_holder,
                                           corner_radius=20,
@@ -68,7 +76,7 @@ class StudyManagerApp():
                                           height=130,
                                           border_color="black",
                                           border_width=1)
-        self.db2_task_frame.grid(row=3, column=0, padx=20, pady=10, sticky="w")
+        self.db2_task_frame.grid(row=1, column=0, padx=20, pady=10, sticky="w")
         
         self.session_reminder = ctk.CTkFrame(self.db_holder,
                                              corner_radius=20,
@@ -77,7 +85,7 @@ class StudyManagerApp():
                                              height=60,
                                              border_color="#82B366",
                                              border_width=1)
-        self.session_reminder.grid(row=4, column=0,padx=20, pady=30, sticky="s")
+        self.session_reminder.grid(row=2, column=0,padx=20, pady=30, sticky="s")
         
         self.add_task_button = ctk.CTkButton(self.button_frame,
                                              text="+ Add Task",
@@ -85,11 +93,21 @@ class StudyManagerApp():
                                              fg_color="#5DAC70",
                                              height=50,
                                              width=90)
-        self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
+        self.add_task_button.grid(row=0, column=2, padx=10, pady=15, sticky="e")
         
-        self.db_calendar_frame = ctk.CTkFrame(self.app_frame)
+        large_font = font.Font(family="Helvetica", size=14)
         
-
+        self.db_calendar_frame = Frame(self.app_frame,
+                                              width=320,
+                                              height=340)
+        self.db_calendar_frame.grid(row=2, column=1, padx=10, pady=10, sticky="nw")
+        
+        cal = Calendar(self.db_calendar_frame, selectmode="day", font=large_font )
+        cal.grid()
+        
+        
+        
+    
 
 class Event():
     def __init__(self, title, event_type, due_date):
