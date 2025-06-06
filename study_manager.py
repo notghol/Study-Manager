@@ -1,0 +1,104 @@
+from tkinter import *
+from tkinter import ttk
+from tkmacosx import Button
+from datetime import datetime
+import customtkinter as ctk
+
+class StudyManagerApp():
+    def __init__(self):
+        
+        root.geometry("850x600")
+        root.configure(bg="#F8F5F2")
+        
+        red_alert = "#AD4849"
+        yellow_alert = "#CFB353"
+        
+        
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_rowconfigure(0, weight=1)
+        
+        self.app_frame = Frame(bg="#F8F5F2")
+        self.app_frame.grid(sticky=NSEW)
+        self.app_frame.grid_columnconfigure(0, weight=1)
+    
+        self.button_frame = Frame(self.app_frame,
+                                  bg="#F8F5F2")
+        self.button_frame.grid(row=0, column=0, sticky="ew")
+        self.button_frame.grid_columnconfigure(2, weight=1) 
+        
+        self.save_button = Button(self.button_frame,
+                                text="Save",
+                                bg="#F5F5F5",
+                                width=70,
+                                height=30,  
+                                borderless=1)  
+    
+        self.save_button.grid(row=0, column=0, sticky="nw")
+
+        self.load_button = Button(self.button_frame,
+                                text="Load",
+                                bg="#F5F5F5",
+                                width=70,
+                                height=30,
+                                borderless=1)
+        self.load_button.grid(row=0, column=1, sticky="nw")
+        
+        self.db_label = Label(self.app_frame, 
+                              text="Dashboard",
+                              font=("Helvetica", "20"),
+                              bg="#F8F5F2")
+        self.db_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        
+        self.db_holder = Frame(self.app_frame, bg="#F8F5F2")
+        self.db_holder.grid(row=2, column=0, sticky=NSEW)
+
+        self.db_task_frame = ctk.CTkFrame(self.db_holder,
+                                          corner_radius=20,
+                                          fg_color=red_alert,
+                                          width=350,
+                                          height=130,
+                                          border_color="black",
+                                          border_width=1)
+        self.db_task_frame.grid(row=0, column=0, padx=20, pady=10, sticky="w")
+
+        self.db2_task_frame = ctk.CTkFrame(self.db_holder,
+                                          corner_radius=20,
+                                          fg_color=yellow_alert,
+                                          width=350,
+                                          height=130,
+                                          border_color="black",
+                                          border_width=1)
+        self.db2_task_frame.grid(row=3, column=0, padx=20, pady=10, sticky="w")
+        
+        self.session_reminder = ctk.CTkFrame(self.db_holder,
+                                             corner_radius=20,
+                                             fg_color="#D5E8D4",
+                                             width=260,
+                                             height=60,
+                                             border_color="#82B366",
+                                             border_width=1)
+        self.session_reminder.grid(row=4, column=0,padx=20, pady=30, sticky="s")
+        
+        self.add_task_button = ctk.CTkButton(self.button_frame,
+                                             text="+ Add Task",
+                                             corner_radius=10,
+                                             fg_color="#5DAC70",
+                                             height=50,
+                                             width=90)
+        self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
+        
+        self.db_calendar_frame = ctk.CTkFrame(self.app_frame)
+        
+
+
+class Event():
+    def __init__(self, title, event_type, due_date):
+        self.title = title
+        self.type = event_type
+        self.due_date = due_date
+
+if __name__ == "__main__":
+    root = Tk()
+    root.title("Study Manager")
+    StudyManagerApp()
+    root.mainloop()
