@@ -22,6 +22,9 @@ class StudyManagerApp():
         self.app_frame.grid(sticky=NSEW)
         self.app_frame.grid_columnconfigure(0, weight=1)
         self.app_frame.grid_columnconfigure(1, weight=1)
+        self.app_frame.grid_rowconfigure(2, weight=0)
+        self.app_frame.grid_rowconfigure(3, weight=0)
+
 
 
     
@@ -98,13 +101,25 @@ class StudyManagerApp():
         large_font = font.Font(family="Helvetica", size=14)
         
         self.db_calendar_frame = Frame(self.app_frame,
-                                              width=320,
-                                              height=340)
+                                    width=320,
+                                    bg="#F8F5F2")
         self.db_calendar_frame.grid(row=2, column=1, padx=10, pady=10, sticky="nw")
-        
+
+        self.db_calendar_frame.grid_rowconfigure(0, weight=0)
+        self.db_calendar_frame.grid_rowconfigure(1, weight=0)
+        self.db_calendar_frame.grid_columnconfigure(0, weight=1)
+
         cal = Calendar(self.db_calendar_frame, selectmode="day", font=large_font )
-        cal.grid()
-        
+        cal.grid(row=0, column=0)
+
+        self.streak_frame = ctk.CTkLabel(self.db_calendar_frame,
+                                        text="sdf",
+                                        width=190,
+                                        height=60,
+                                        fg_color="#DF7341",
+                                        corner_radius=10)
+        self.streak_frame.grid(row=1, column=0, pady=50, sticky="s")
+
         
         
     
