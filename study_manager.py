@@ -138,40 +138,85 @@ class StudyManagerApp():
 class DisplayAddTask():
     def __init__(self, partner):
         background = "#F8F5F2"
+        med_font = font.Font(family="Helvetica", size=16)
+        small_font = font.Font(family="Helvetica", size=14)
         
         self.add_task_gui = Toplevel()
-        self.add_task_gui.geometry("700x400")
+        self.add_task_gui.geometry("700x500")
         self.add_task_gui.configure(bg=background)
-        partner.add_task_button.configure(state=DISABLED)
         
+        partner.add_task_button.configure(state=DISABLED)
         self.add_task_gui.protocol("WM_DELETE_WINDOW",
                                lambda: self.close_task(partner))
         
-        
-
         title_label = Label(self.add_task_gui,
                             text="Add Task",
                             font=font.Font(family="Helvetica", size=18, weight="bold"),
-                            bg="#F8F5F2")
+                            bg=background)
         title_label.pack(pady=20)
 
-        self.main_frame = Frame(self.add_task_gui,
-                           bg="#F8F5F2")
+        self.main_frame = Frame(self.add_task_gui, bg=background)
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        self.left_side_frame = Frame(self.main_frame, 
-                                bg="#F8F5F2")
+        self.left_side_frame = Frame(self.main_frame, bg=background)
         self.left_side_frame.pack(side="left", fill="both", expand=True, padx=20)
 
         self.task_type_label = Label(self.left_side_frame, 
                                      text="Choose type of task:",
-                                     bg="#F8F5F2", font=font.Font(family="Helvetica", size=16))
+                                     bg=background,
+                                     font=med_font)
         self.task_type_label.pack(anchor="w", pady=10)
 
+        self.rad_var = StringVar()
         for choice in ["Exam", "Assignment", "Study Session"]:
-            self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=StringVar(), value=choice,
-                        font=font.Font(family="Helvetica", size=14), bg="#F8F5F2", anchor="w")
+            self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=self.rad_var, value=choice,
+                        font=small_font, bg=background, anchor="w")
             self.rad_option.pack(anchor="w")
+            
+        self.subject_lb = Label(self.left_side_frame,
+                                text="Subject",
+                                bg=background,
+                                font=med_font)
+        self.subject_lb.pack(anchor="w", pady=10)
+        
+        self.subject_entry = Entry(self.left_side_frame,
+                                   font=small_font,
+                                   width=25)
+        self.subject_entry.pack(anchor="w", pady=5)
+    
+        self.description_lb = Label(self.left_side_frame,
+                                 text="Description",
+                                 bg=background,
+                                 font=med_font)
+        self.description_lb.pack(anchor="w", pady=10)
+        
+        self.description_entry = Entry(self.left_side_frame, 
+                                       font=small_font,
+                                       width=25)
+        self.description_entry.insert(0, "Optional")
+        self.description_entry.pack(anchor="w", pady=5)
+
+        self.right_side_frame = Frame(self.main_frame, bg=background)
+        self.right_side_frame.pack(side="right", fill="both", expand=True, padx=20)
+
+        self.due_date_lb = Label(self.right_side_frame,
+                                 text="Set Due Date",
+                                 bg=background,
+                                 font=med_font)
+        self.due_date_lb.pack(pady=10)
+        
+        self.calendar = Calendar(self.right_side_frame, selectmode="day", font=med_font)
+        self.calendar.pack(pady=10)
+
+        submit_button = ctk.CTkButton(self.add_task_gui, 
+                               text="Add Task",
+                               corner_radius=10,
+                               font=ctk.CTkFont(family="Helvetica", size=16),
+                               fg_color="#5DAC70",
+                               width=140,
+                               height=70)
+        submit_button.pack(pady=20)
+        
 
 
     def close_task(self, partner):
