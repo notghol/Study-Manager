@@ -140,7 +140,7 @@ class DisplayAddTask():
         background = "#F8F5F2"
         
         self.add_task_gui = Toplevel()
-        self.add_task_gui.geometry("850x600")
+        self.add_task_gui.geometry("700x400")
         self.add_task_gui.configure(bg=background)
         partner.add_task_button.configure(state=DISABLED)
         
@@ -148,6 +148,32 @@ class DisplayAddTask():
                                lambda: self.close_task(partner))
         
         
+
+        title_label = Label(self.add_task_gui,
+                            text="Add Task",
+                            font=font.Font(family="Helvetica", size=18, weight="bold"),
+                            bg="#F8F5F2")
+        title_label.pack(pady=20)
+
+        self.main_frame = Frame(self.add_task_gui,
+                           bg="#F8F5F2")
+        self.main_frame.pack(fill="both", expand=True, padx=20, pady=10)
+
+        self.left_side_frame = Frame(self.main_frame, 
+                                bg="#F8F5F2")
+        self.left_side_frame.pack(side="left", fill="both", expand=True, padx=20)
+
+        self.task_type_label = Label(self.left_side_frame, 
+                                     text="Choose type of task:",
+                                     bg="#F8F5F2", font=font.Font(family="Helvetica", size=16))
+        self.task_type_label.pack(anchor="w", pady=10)
+
+        for choice in ["Exam", "Assignment", "Study Session"]:
+            self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=StringVar(), value=choice,
+                        font=font.Font(family="Helvetica", size=14), bg="#F8F5F2", anchor="w")
+            self.rad_option.pack(anchor="w")
+
+
     def close_task(self, partner):
         """
         Closes Add Task GUI and enables the button
