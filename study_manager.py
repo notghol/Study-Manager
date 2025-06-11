@@ -33,7 +33,8 @@ class StudyManagerApp():
         self.button_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
         self.button_frame.grid_columnconfigure(0, weight=0)
         self.button_frame.grid_columnconfigure(1, weight=0)
-        self.button_frame.grid_columnconfigure(2, weight=1)  
+        self.button_frame.grid_columnconfigure(2, weight=0)
+        self.button_frame.grid_columnconfigure(3, weight=1)  
 
 
         
@@ -53,6 +54,14 @@ class StudyManagerApp():
                                 height=30,
                                 borderless=1)
         self.load_button.grid(row=0, column=1, sticky="nw")
+        
+        self.all_tasks_button = Button(self.button_frame,
+                                       text="All Tasks",
+                                       bg="#F5F5F5",
+                                       width=120,
+                                       height=30,
+                                       borderless=1)
+        self.all_tasks_button.grid(row=0, column=2, padx=20, sticky="nw")
         
         self.db_label = Label(self.app_frame, 
                               text="Dashboard",
@@ -95,8 +104,10 @@ class StudyManagerApp():
                                              corner_radius=10,
                                              fg_color="#5DAC70",
                                              height=50,
-                                             width=90)
-        self.add_task_button.grid(row=0, column=2, padx=10, pady=15, sticky="e")
+                                             width=90, 
+                                             command=lambda: self.to_add_task())
+        self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
+        self.add_task_button.configure(state=NORMAL)
         
         large_font = font.Font(family="Helvetica", size=14)
         
@@ -119,8 +130,31 @@ class StudyManagerApp():
                                         fg_color="#DF7341",
                                         corner_radius=10)
         self.streak_frame.grid(row=1, column=0, pady=50, sticky="s")
-
         
+    def to_add_task(self):
+        DisplayAddTask(self)
+        
+
+class DisplayAddTask():
+    def __init__(self, partner):
+        background = "#F8F5F2"
+        
+        self.add_task_gui = Toplevel()
+        self.add_task_gui.geometry("850x600")
+        self.add_task_gui.configure(bg=background)
+        partner.add_task_button.configure(state=DISABLED)
+        
+        self.add_task_gui.protocol("WM_DELETE_WINDOW",
+                               lambda: self.close_task(partner))
+        
+        
+    def close_task(self, partner):
+        """
+        Closes Add Task GUI and enables the button
+        """
+        
+        partner.add_task_button.configure(state=NORMAL)
+        self.add_task_gui.destroy()
         
     
 
