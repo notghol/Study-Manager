@@ -137,6 +137,7 @@ class StudyManagerApp():
 
 class DisplayAddTask():
     def __init__(self, partner):
+        self.firstclick=True
         background = "#F8F5F2"
         med_font = font.Font(family="Helvetica", size=16)
         small_font = font.Font(family="Helvetica", size=14)
@@ -194,6 +195,7 @@ class DisplayAddTask():
                                        font=small_font,
                                        width=25)
         self.description_entry.insert(0, "Optional")
+        self.description_entry.bind('<FocusIn>', lambda event : self.on_entry_click(event))
         self.description_entry.pack(anchor="w", pady=5)
 
         self.right_side_frame = Frame(self.main_frame, bg=background)
@@ -217,7 +219,10 @@ class DisplayAddTask():
                                height=70)
         submit_button.pack(pady=20)
         
-
+    def on_entry_click(self, event):
+        if self.firstclick:
+            self.firstclick = False
+            self.description_entry.delete(0, "end") 
 
     def close_task(self, partner):
         """
