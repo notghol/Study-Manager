@@ -7,7 +7,7 @@ from tkcalendar import Calendar
 
 class StudyManagerApp():
     def __init__(self):
-        
+        self.events=[]
         root.geometry("850x600")
         root.configure(bg="#F8F5F2")
         
@@ -24,9 +24,6 @@ class StudyManagerApp():
         self.app_frame.grid_columnconfigure(1, weight=1)
         self.app_frame.grid_rowconfigure(2, weight=0)
         self.app_frame.grid_rowconfigure(3, weight=0)
-
-
-
     
         self.button_frame = Frame(self.app_frame,
                                   bg="#F8F5F2")
@@ -35,7 +32,6 @@ class StudyManagerApp():
         self.button_frame.grid_columnconfigure(1, weight=0)
         self.button_frame.grid_columnconfigure(2, weight=0)
         self.button_frame.grid_columnconfigure(3, weight=1)  
-
 
         
         self.save_button = Button(self.button_frame,
@@ -191,12 +187,15 @@ class DisplayAddTask():
                                  font=med_font)
         self.description_lb.pack(anchor="w", pady=10)
         
-        self.description_entry = Entry(self.left_side_frame, 
+        self.description_entry = Text(self.left_side_frame, 
                                        font=small_font,
-                                       width=25)
-        self.description_entry.insert(0, "Optional")
-        self.description_entry.bind('<FocusIn>', lambda event : self.on_entry_click(event))
+                                       bg="#FFFFFF",
+                                       width=25,
+                                       height=5)
         self.description_entry.pack(anchor="w", pady=5)
+        self.description_entry.insert("1.0", "Optional")
+        self.description_entry.bind('<FocusIn>', lambda event : self.on_entry_click(event))
+
 
         self.right_side_frame = Frame(self.main_frame, bg=background)
         self.right_side_frame.pack(side="right", fill="both", expand=True, padx=20)
@@ -213,16 +212,29 @@ class DisplayAddTask():
         submit_button = ctk.CTkButton(self.add_task_gui, 
                                text="Add Task",
                                corner_radius=10,
+                               command=lambda: self.add_task(partner),
                                font=ctk.CTkFont(family="Helvetica", size=16),
                                fg_color="#5DAC70",
                                width=140,
                                height=70)
         submit_button.pack(pady=20)
         
-    def on_entry_click(self, event):
+    def add_task(self, partner):
+        task_type = self.rad_var.get()
+        subject = self.subject_entry.get()
+        description = self.description_entry.get("1.0", "end")
+        due_date = self.calendar.get_date()
+        
+        new_event = Event(subject=subject, event_type=task_type, description=description, due_date=due_date)
+        partner.events.append(new_event)
+
+        print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
+        self.close_task(partner)
+    
+    def on_entry_click(self, event):    
         if self.firstclick:
             self.firstclick = False
-            self.description_entry.delete(0, "end") 
+            self.description_entry.delete("1.0", "end") 
 
     def close_task(self, partner):
         """
@@ -235,9 +247,10 @@ class DisplayAddTask():
     
 
 class Event():
-    def __init__(self, title, event_type, due_date):
-        self.title = title
+    def __init__(self, subject, event_type, description, due_date):
+        self.subject = subject
         self.type = event_type
+        self.description = description
         self.due_date = due_date
 
 if __name__ == "__main__":
