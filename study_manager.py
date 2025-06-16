@@ -129,7 +129,48 @@ class StudyManagerApp():
         
     def to_add_task(self):
         DisplayAddTask(self)
+    
+    def event_to_db(self):
+        today = datetime.today()
         
+        earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
+        
+        for event in earliest_events:
+            type = f"{event.type}"
+            subject = f"{event.subject}"
+            due_date = f"{event.due_date}"
+            
+            event_date = datetime.strptime(event.due_date, "%m/%d/%y")
+            days_remain = (event_date-today).days
+
+            if days_remain <= 3:
+                alert_colour = "#AD4849"
+            elif days_remain >= 4 and days_remain <=7:
+                alert_colour = "#CFB353"
+            else:
+                alert_colour = "#5DAC70"
+            
+            task_info = Frame(self.db_task_frame, bg= alert_colour)
+            task_info.pack(anchor="w", fill="x")
+            type_label = Label(self.db_task_frame,
+                                       text=type,
+                                       font=("Helvetica", 12, "bold"),
+                                       bg=alert_colour
+                                       )
+            type_label.pack(anchor="nw")
+            
+            subject_label = Label(task_info,
+                                    text=subject,
+                                    font=("Helvetica", 18),
+                                    bg=alert_colour)
+            subject_label.pack(anchor="w", pady=5, padx=10)
+            
+            due_str = event_date.strftime("%B %d, %Y")
+            due_label = Label(task_info,
+                              text=f"{due_str} -- {days_remain} day(s) away!",
+                              font= ("Helvetica", 14),
+                              bg= alert_colour)
+            due_label.pack(anchor="w", padx=10)
 
 class DisplayAddTask():
     def __init__(self, partner):
@@ -229,6 +270,7 @@ class DisplayAddTask():
         partner.events.append(new_event)
 
         print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
+        partner.event_to_db()
         self.close_task(partner)
     
     def on_entry_click(self, event):    
