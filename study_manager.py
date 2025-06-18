@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk, font, messagebox
+from tkinter import ttk, font, messagebox, filedialog
 from tkmacosx import Button
 from datetime import datetime
 import customtkinter as ctk
@@ -49,7 +49,8 @@ class StudyManagerApp():
                                 bg="#F5F5F5",
                                 width=70,
                                 height=30,
-                                borderless=1)
+                                borderless=1,
+                                command= lambda: self.load_data())
         self.load_button.grid(row=0, column=1, sticky="nw")
         
         self.all_tasks_button = Button(self.button_frame,
@@ -190,7 +191,21 @@ class StudyManagerApp():
                 format_description = event.description.replace('\n', '\\n')
                 text_file.write(f"{event.subject}|{event.type}|{format_description}|{event.due_date}\n")
         messagebox.showinfo("Saved!", "File saved successfully!")
-
+        
+    def load_data(self):
+        filepath = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+        
+        with open(filepath, "r") as file:
+            for line in file:
+                line=line.strip()
+                parts = line.split("|")
+                
+                subject, event_type, description, due_date = parts
+                description = description.replace("\\n", "\n")
+                
+                self.events.append(Event(subject=subject, event_type=event_type, description=description, due_date=due_date))
+        self.event_to_db()
+            
 class DisplayAddTask():
     def __init__(self, partner):
         self.firstclick=True
