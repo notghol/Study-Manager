@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk, font
+from tkinter import ttk, font, messagebox
 from tkmacosx import Button
 from datetime import datetime
 import customtkinter as ctk
@@ -39,7 +39,8 @@ class StudyManagerApp():
                                 bg="#F5F5F5",
                                 width=70,
                                 height=30,  
-                                borderless=1)  
+                                borderless=1,
+                                command=lambda: self.save_data())  
     
         self.save_button.grid(row=0, column=0, sticky="nw")
 
@@ -182,6 +183,13 @@ class StudyManagerApp():
                               bg= alert_colour)
             due_label.pack(anchor="w", padx=10)
 
+    def save_data(self):
+        
+        with open('study_manager.txt', 'w') as text_file:
+            for event in self.events:
+                format_description = event.description.replace('\n', '\\n')
+                text_file.write(f"{event.subject}|{event.type}|{format_description}|{event.due_date}\n")
+        messagebox.showinfo("Saved!", "File saved successfully!")
 
 class DisplayAddTask():
     def __init__(self, partner):
@@ -297,7 +305,7 @@ class DisplayAddTask():
         partner.add_task_button.configure(state=NORMAL)
         self.add_task_gui.destroy()
         
-    
+
 
 class Event():
     def __init__(self, subject, event_type, description, due_date):
