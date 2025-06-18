@@ -131,11 +131,16 @@ class StudyManagerApp():
         DisplayAddTask(self)
     
     def event_to_db(self):
+        for frame in [self.db_task_frame, self.db2_task_frame]:
+            for widget in frame.winfo_children():
+                widget.destroy()
+
         today = datetime.today()
         
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
-        
-        for event in earliest_events:
+        count = 0
+        for event in earliest_events[:2]:
+            count +=1
             type = f"{event.type}"
             subject = f"{event.subject}"
             due_date = f"{event.due_date}"
@@ -150,27 +155,33 @@ class StudyManagerApp():
             else:
                 alert_colour = "#5DAC70"
             
-            task_info = Frame(self.db_task_frame, bg= alert_colour)
-            task_info.pack(anchor="w", fill="x")
-            type_label = Label(self.db_task_frame,
-                                       text=type,
-                                       font=("Helvetica", 12, "bold"),
-                                       bg=alert_colour
-                                       )
-            type_label.pack(anchor="nw")
+            if count == 1:
+                frame = self.db_task_frame
+            else:
+                frame = self.db2_task_frame
+            frame.configure(fg_color=alert_colour)
             
-            subject_label = Label(task_info,
+            frame.pack_propagate(False)
+            
+            type_label = Label(frame,
+                               text=type,
+                               font=("Helvetica", 12, "bold"),
+                               bg=alert_colour)
+            type_label.pack(anchor="w", pady=4, padx=10)
+            
+            subject_label = Label(frame,
                                     text=subject,
                                     font=("Helvetica", 18),
                                     bg=alert_colour)
             subject_label.pack(anchor="w", pady=5, padx=10)
             
             due_str = event_date.strftime("%B %d, %Y")
-            due_label = Label(task_info,
+            due_label = Label(frame,
                               text=f"{due_str} -- {days_remain} day(s) away!",
                               font= ("Helvetica", 14),
                               bg= alert_colour)
             due_label.pack(anchor="w", padx=10)
+
 
 class DisplayAddTask():
     def __init__(self, partner):
