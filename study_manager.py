@@ -6,14 +6,13 @@ import customtkinter as ctk
 from tkcalendar import Calendar
 
 class StudyManagerApp():
-    def __init__(self):
+    def create_db_gui(self):
         self.events=[]
         root.geometry("850x600")
         root.configure(bg="#F8F5F2")
         
         red_alert = "#AD4849"
         yellow_alert = "#CFB353"
-        
         
         root.grid_columnconfigure(0, weight=1)
         root.grid_rowconfigure(0, weight=1)
@@ -58,7 +57,8 @@ class StudyManagerApp():
                                        bg="#F5F5F5",
                                        width=120,
                                        height=30,
-                                       borderless=1)
+                                       borderless=1,
+                                       command= lambda: self.view_all_tasks())
         self.all_tasks_button.grid(row=0, column=2, padx=20, sticky="nw")
         
         self.db_label = Label(self.app_frame, 
@@ -126,12 +126,15 @@ class StudyManagerApp():
                                         width=190,
                                         height=60,
                                         fg_color="#FFFFFF",
+                                        text_color="#000000",
                                         border_color= "#000000",
                                         border_width=1,
                                         corner_radius=10,
                                         command=lambda:self.cal_show_task())
         self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
-        
+    
+    def __init__(self):
+        self.create_db_gui()
     def to_add_task(self):
         DisplayAddTask(self)
     
@@ -201,7 +204,6 @@ class StudyManagerApp():
         except IndexError:
             self.found_event_button.configure(text="No event found on that day.")
                 
-    
     def save_data(self):
         with open('study_manager.txt', 'w') as text_file:
             for event in self.events:
@@ -223,7 +225,14 @@ class StudyManagerApp():
                 
                 self.events.append(Event(subject=subject, event_type=event_type, description=description, due_date=due_date))
         self.event_to_db()
-            
+
+    def view_all_tasks(self):
+        for widget in self.app_frame.winfo_children():
+            widget.destroy()
+        background = "#F8F5F2"
+        self.main_frame = Frame(bg=background)
+        self.main_frame.grid()
+        
 class DisplayAddTask():
     def __init__(self, partner):
         self.firstclick=True
@@ -237,7 +246,7 @@ class DisplayAddTask():
         
         partner.add_task_button.configure(state=DISABLED)
         self.add_task_gui.protocol("WM_DELETE_WINDOW",
-                               lambda: self.close_task(partner))
+                               lambda: self.close_add_task(partner))
         
         title_label = Label(self.add_task_gui,
                             text="Add Task",
@@ -323,14 +332,14 @@ class DisplayAddTask():
 
         print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
         partner.event_to_db()
-        self.close_task(partner)
+        self.close_add_task(partner)
     
     def on_entry_click(self, event):    
         if self.firstclick:
             self.firstclick = False
             self.description_entry.delete("1.0", "end") 
 
-    def close_task(self, partner):
+    def close_add_task(self, partner):
         """
         Closes Add Task GUI and enables the button
         """
@@ -338,9 +347,7 @@ class DisplayAddTask():
         partner.add_task_button.configure(state=NORMAL)
         self.add_task_gui.destroy()
 
-class ViewAllTasks():
-    def __init__(self):
-        pass
+    
 class Event():
     def __init__(self, subject, event_type, description, due_date):
         self.subject = subject
