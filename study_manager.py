@@ -118,16 +118,19 @@ class StudyManagerApp():
         self.db_calendar_frame.grid_rowconfigure(1, weight=0)
         self.db_calendar_frame.grid_columnconfigure(0, weight=1)
 
-        cal = Calendar(self.db_calendar_frame, selectmode="day", font=large_font )
-        cal.grid(row=0, column=0)
+        self.calendar = Calendar(self.db_calendar_frame, selectmode="day", font=large_font)
+        self.calendar.grid(row=0, column=0)
 
-        self.streak_frame = ctk.CTkLabel(self.db_calendar_frame,
-                                        text="sdf",
+        self.found_event_button = ctk.CTkButton(self.db_calendar_frame,
+                                        text="Select a date and click me",
                                         width=190,
                                         height=60,
-                                        fg_color="#DF7341",
-                                        corner_radius=10)
-        self.streak_frame.grid(row=1, column=0, pady=50, sticky="s")
+                                        fg_color="#FFFFFF",
+                                        border_color= "#000000",
+                                        border_width=1,
+                                        corner_radius=10,
+                                        command=lambda:self.cal_show_task())
+        self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
         
     def to_add_task(self):
         DisplayAddTask(self)
@@ -161,8 +164,8 @@ class StudyManagerApp():
                 frame = self.db_task_frame
             else:
                 frame = self.db2_task_frame
+                
             frame.configure(fg_color=alert_colour)
-            
             frame.pack_propagate(False)
             
             type_label = Label(frame,
@@ -177,18 +180,33 @@ class StudyManagerApp():
                                     bg=alert_colour)
             subject_label.pack(anchor="w", pady=5, padx=10)
             
-            due_str = event_date.strftime("%B %d, %Y")
+            due_str = event_date.strftime("%d/%m/%Y")
             due_label = Label(frame,
                               text=f"{due_str} -- {days_remain} day(s) away!",
                               font= ("Helvetica", 14),
                               bg= alert_colour)
             due_label.pack(anchor="w", padx=10)
 
+    def cal_show_task(self):
+        date = self.calendar.get_date()
+        found_event = []
+        for event in self.events:
+            if date == event.due_date:
+                found_event.append(event)
+                break
+        try:
+            event = found_event[0]
+            event_str = f"{event.type} for {event.subject} on {event.due_date}"
+            self.found_event_button.configure(text=event_str)
+        except IndexError:
+            self.found_event_button.configure(text="No event found on that day.")
+                
+    
     def save_data(self):
-        
         with open('study_manager.txt', 'w') as text_file:
             for event in self.events:
                 format_description = event.description.replace('\n', '\\n')
+                
                 text_file.write(f"{event.subject}|{event.type}|{format_description}|{event.due_date}\n")
         messagebox.showinfo("Saved!", "File saved successfully!")
         
@@ -214,7 +232,7 @@ class DisplayAddTask():
         small_font = font.Font(family="Helvetica", size=14)
         
         self.add_task_gui = Toplevel()
-        self.add_task_gui.geometry("700x500")
+        self.add_task_gui.geometry("700x550")
         self.add_task_gui.configure(bg=background)
         
         partner.add_task_button.configure(state=DISABLED)
@@ -240,7 +258,7 @@ class DisplayAddTask():
         self.task_type_label.pack(anchor="w", pady=10)
 
         self.rad_var = StringVar()
-        for choice in ["Exam", "Assignment", "Study Session"]:
+        for choice in ["Exam", "Assignment", "Homework", "Study Session"]:
             self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=self.rad_var, value=choice,
                         font=small_font, bg=background, anchor="w")
             self.rad_option.pack(anchor="w")
@@ -319,9 +337,10 @@ class DisplayAddTask():
         
         partner.add_task_button.configure(state=NORMAL)
         self.add_task_gui.destroy()
-        
 
-
+class ViewAllTasks():
+    def __init__(self):
+        pass
 class Event():
     def __init__(self, subject, event_type, description, due_date):
         self.subject = subject
