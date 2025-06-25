@@ -230,8 +230,51 @@ class StudyManagerApp():
         for widget in self.app_frame.winfo_children():
             widget.destroy()
         background = "#F8F5F2"
-        self.main_frame = Frame(bg=background)
-        self.main_frame.grid()
+        
+        self.button_frame = Frame(self.app_frame,
+                                  bg=background)
+        self.button_frame.pack(fill="x")
+        
+        self.save_button = Button(self.button_frame,
+                                text="Save",
+                                bg="#F5F5F5",
+                                width=70,
+                                height=30,  
+                                borderless=1,
+                                command=lambda: self.save_data())  
+    
+        self.save_button.pack(side="left")
+
+        self.load_button = Button(self.button_frame,
+                                text="Load",
+                                bg="#F5F5F5",
+                                width=70,
+                                height=30,
+                                borderless=1,
+                                command= lambda: self.load_data())
+        self.load_button.pack(side="left")
+        
+        self.db_button = Button(self.button_frame,
+                                       text="Dashboard",
+                                       bg="#F5F5F5",
+                                       width=120,
+                                       height=30,
+                                       borderless=1,
+                                       command= lambda: self.view_all_tasks())
+        self.db_button.pack(padx=20, side="left")
+        
+        self.left_frame = Frame(self.app_frame, bg=background)
+        self.left_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        
+        self.mid_frame = Frame(self.app_frame, bg=background)
+        self.mid_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        
+        self.right_frame = Frame(self.app_frame, bg=background)
+        self.right_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        
+        Label(self.left_frame, text="sddfdsfsdf").pack()
+        Label(self.mid_frame, text="sddfdsfsdf").pack()
+        Label(self.right_frame, text="sddfdsfsdf").pack()
         
 class DisplayAddTask():
     def __init__(self, partner):
