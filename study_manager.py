@@ -135,6 +135,7 @@ class StudyManagerApp():
     
     def __init__(self):
         self.create_db_gui()
+        
     def to_add_task(self):
         DisplayAddTask(self)
     
@@ -229,6 +230,7 @@ class StudyManagerApp():
     def view_all_tasks(self):
         for widget in self.app_frame.winfo_children():
             widget.destroy()
+        root.geometry("950x600")
         background = "#F8F5F2"
         
         self.button_frame = Frame(self.app_frame,
@@ -263,18 +265,81 @@ class StudyManagerApp():
                                        command= lambda: self.view_all_tasks())
         self.db_button.pack(padx=20, side="left")
         
+        self.add_task_button = ctk.CTkButton(self.button_frame,
+                                        text="+ Add Task",
+                                        corner_radius=10,
+                                        fg_color="#5DAC70",
+                                        height=50,
+                                        width=90, 
+                                        command=lambda: self.to_add_task())
+        self.add_task_button.pack(side="right", padx=10, pady=15)
+        self.add_task_button.configure(state=NORMAL)
+        
         self.left_frame = Frame(self.app_frame, bg=background)
-        self.left_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        self.left_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         
         self.mid_frame = Frame(self.app_frame, bg=background)
-        self.mid_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        self.mid_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         
         self.right_frame = Frame(self.app_frame, bg=background)
-        self.right_frame.pack(side="left", fill="both", expand=True, padx=20, pady=20)
+        self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         
-        Label(self.left_frame, text="sddfdsfsdf").pack()
-        Label(self.mid_frame, text="sddfdsfsdf").pack()
-        Label(self.right_frame, text="sddfdsfsdf").pack()
+        label_font = font.Font(family="Helvetica", size=16, weight="bold")
+        
+        Label(self.left_frame, text="Imminent", font=label_font, bg=background).pack()
+        Label(self.mid_frame, text="Close", font=label_font, bg=background).pack()
+        Label(self.right_frame, text="Far", font=label_font, bg=background).pack()
+        
+        today = datetime.today()
+        earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
+        for event in earliest_events:
+            type = f"{event.type}"
+            subject = f"{event.subject}"
+            due_date = f"{event.due_date}"
+            
+            event_date = datetime.strptime(event.due_date, "%m/%d/%y")
+            days_remain = (event_date-today).days
+            
+            if days_remain <= 3:
+                alert_colour = "#AD4849"
+                date_frame = self.left_frame
+                
+            elif days_remain >= 4 and days_remain <=7:
+                alert_colour = "#CFB353"
+                date_frame = self.mid_frame
+            else:
+                alert_colour = "#5DAC70"
+                date_frame = self.right_frame
+                
+            event_frame = ctk.CTkFrame(date_frame,
+                                    corner_radius=20,
+                                    border_color="black",
+                                    border_width=1,
+                                    width=300,
+                                    height=110,
+                                    fg_color=alert_colour)
+            event_frame.pack(pady=10)
+            event_frame.pack_propagate(False)
+            
+            type_label = Label(event_frame,
+                               text=type,
+                               font=("Helvetica", 12, "bold"),
+                               bg=alert_colour)
+            type_label.pack(anchor="w", pady=4, padx=10)
+            
+            subject_label = Label(event_frame,
+                                    text=subject,
+                                    font=("Helvetica", 18),
+                                    bg=alert_colour)
+            subject_label.pack(anchor="w", pady=5, padx=10)
+            
+            due_str = event_date.strftime("%d/%m/%Y")
+            due_label = Label(event_frame,
+                              text=f"{due_str} -- {days_remain} day(s) away!",
+                              font= ("Helvetica", 14),
+                              bg= alert_colour)
+            due_label.pack(anchor="w", padx=10)
+        
         
 class DisplayAddTask():
     def __init__(self, partner):
