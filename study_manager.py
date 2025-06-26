@@ -7,9 +7,9 @@ from tkcalendar import Calendar
 
 class StudyManagerApp():
     def create_db_gui(self):
-        self.events=[]
         root.geometry("850x600")
         root.configure(bg="#F8F5F2")
+        self.focus_tab = True
         
         red_alert = "#AD4849"
         yellow_alert = "#CFB353"
@@ -17,12 +17,6 @@ class StudyManagerApp():
         root.grid_columnconfigure(0, weight=1)
         root.grid_rowconfigure(0, weight=1)
         
-        self.app_frame = Frame(bg="#F8F5F2")
-        self.app_frame.grid(sticky=NSEW)
-        self.app_frame.grid_columnconfigure(0, weight=1)
-        self.app_frame.grid_columnconfigure(1, weight=1)
-        self.app_frame.grid_rowconfigure(2, weight=0)
-        self.app_frame.grid_rowconfigure(3, weight=0)
     
         self.button_frame = Frame(self.app_frame,
                                   bg="#F8F5F2")
@@ -49,7 +43,7 @@ class StudyManagerApp():
                                 width=70,
                                 height=30,
                                 borderless=1,
-                                command= lambda: self.load_data())
+                                command=lambda: self.load_data())
         self.load_button.grid(row=0, column=1, sticky="nw")
         
         self.all_tasks_button = Button(self.button_frame,
@@ -78,15 +72,19 @@ class StudyManagerApp():
                                           border_color="black",
                                           border_width=1)
         self.db_task_frame.grid(row=0, column=0, padx=20, pady=10, sticky="w")
+        self.db_task_frame.grid_propagate(False)
+        Label(self.db_task_frame, text="No upcoming events.", bg=red_alert).grid(pady=10, padx=10)
 
         self.db2_task_frame = ctk.CTkFrame(self.db_holder,
-                                          corner_radius=20,
-                                          fg_color=yellow_alert,
-                                          width=350,
-                                          height=130,
-                                          border_color="black",
-                                          border_width=1)
+                                           corner_radius=20,
+                                           fg_color=yellow_alert,
+                                           width=350,
+                                           height=130,
+                                           border_color="black",
+                                           border_width=1)
         self.db2_task_frame.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        self.db2_task_frame.grid_propagate(False)
+        Label(self.db2_task_frame, text="No upcoming events.", bg=yellow_alert).grid(pady=10, padx=10)
         
         self.session_reminder = ctk.CTkFrame(self.db_holder,
                                              corner_radius=20,
@@ -134,6 +132,13 @@ class StudyManagerApp():
         self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
     
     def __init__(self):
+        self.app_frame = Frame(bg="#F8F5F2")
+        self.app_frame.grid(sticky=NSEW)
+        self.app_frame.grid_columnconfigure(0, weight=1)
+        self.app_frame.grid_columnconfigure(1, weight=1)
+        self.app_frame.grid_rowconfigure(2, weight=0)
+        self.app_frame.grid_rowconfigure(3, weight=0)
+        self.events=[]
         self.create_db_gui()
         
     def to_add_task(self):
@@ -215,7 +220,7 @@ class StudyManagerApp():
         
     def load_data(self):
         filepath = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-        
+        self.events=[]
         with open(filepath, "r") as file:
             for line in file:
                 line=line.strip()
@@ -225,12 +230,16 @@ class StudyManagerApp():
                 description = description.replace("\\n", "\n")
                 
                 self.events.append(Event(subject=subject, event_type=event_type, description=description, due_date=due_date))
-        self.event_to_db()
+        if self.focus_tab == True:
+            self.event_to_db()
+        else:
+            self.view_all_tasks()
 
     def view_all_tasks(self):
         for widget in self.app_frame.winfo_children():
             widget.destroy()
         root.geometry("950x600")
+        self.focus_tab = False
         background = "#F8F5F2"
         
         self.button_frame = Frame(self.app_frame,
@@ -262,7 +271,7 @@ class StudyManagerApp():
                                        width=120,
                                        height=30,
                                        borderless=1,
-                                       command= lambda: self.view_all_tasks())
+                                       command= lambda: self.to_db())
         self.db_button.pack(padx=20, side="left")
         
         self.add_task_button = ctk.CTkButton(self.button_frame,
@@ -339,7 +348,13 @@ class StudyManagerApp():
                               font= ("Helvetica", 14),
                               bg= alert_colour)
             due_label.pack(anchor="w", padx=10)
-        
+    
+    def to_db(self):
+        for widget in self.app_frame.winfo_children():
+            widget.destroy()
+        self.create_db_gui()
+        self.event_to_db()
+    
         
 class DisplayAddTask():
     def __init__(self, partner):
@@ -439,7 +454,10 @@ class DisplayAddTask():
         partner.events.append(new_event)
 
         print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
-        partner.event_to_db()
+        if partner.focus_tab == True:
+            partner.event_to_db()
+        else:
+            partner.view_all_tasks()
         self.close_add_task(partner)
     
     def on_entry_click(self, event):    
