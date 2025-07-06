@@ -1,5 +1,4 @@
-Edit/expand (to see description) Task
-Delete Task
+
 Dark mode
 
 Boundary/error fixes

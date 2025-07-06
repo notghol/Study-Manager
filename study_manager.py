@@ -323,20 +323,29 @@ class StudyManagerApp():
                 alert_colour = "#5DAC70"
                 date_frame = self.right_frame
                 
-            event_frame = ctk.CTkFrame(date_frame,
+            self.event_frame = ctk.CTkFrame(date_frame,
                                        corner_radius=20,
                                        border_color="black",
                                        border_width=1,
                                        width=300,
                                        height=110,
                                        fg_color=alert_colour)
-            event_frame.pack(pady=10)
-            event_frame.pack_propagate(False)
+            self.event_frame.pack(pady=10)
+            self.event_frame.pack_propagate(False)
 
-            top_row = Frame(event_frame, bg=alert_colour)
-            top_row.pack(fill="x", pady=5, padx=10)
+            self.top_row = Frame(self.event_frame, bg=alert_colour)
+            self.top_row.pack(fill="x", pady=5, padx=10)
 
-            self.expand_btn = Button(top_row,
+            self.delete_btn = Button(self.top_row,
+                                     text="x",
+                                     height=20,
+                                     width=20,
+                                     bg=alert_colour,
+                                     borderless=1,
+                                     command=lambda e=event: self.delete_task(e))
+            self.delete_btn.pack(side="right")
+
+            self.expand_btn = Button(self.top_row,
                                      text="↵",
                                      height=20,
                                      width=20,
@@ -344,26 +353,26 @@ class StudyManagerApp():
                                      borderless=1,
                                      command= lambda e=event: self.to_edit_task(e))
             self.expand_btn.pack(side="right")
-
-            type_label = Label(top_row,
-                               text=type,
-                               font=("Helvetica", 12, "bold"),
-                               bg=alert_colour)
-            type_label.pack(anchor="w")
+            
+            self.type_label = Label(self.top_row,
+                                    text=type,
+                                    font=("Helvetica", 12, "bold"),
+                                    bg=alert_colour)
+            self.type_label.pack(anchor="w")
 
             
-            subject_label = Label(event_frame,
-                                  text=subject,
-                                  font=("Helvetica", 18),
-                                  bg=alert_colour)
-            subject_label.pack(anchor="w", pady=5, padx=10)
+            self.subject_label = Label(self.event_frame,
+                                       text=subject,
+                                       font=("Helvetica", 18),
+                                       bg=alert_colour)
+            self.subject_label.pack(anchor="w", pady=5, padx=10)
             
             due_str = event_date.strftime("%d/%m/%Y")
-            due_label = Label(event_frame,
-                              text=f"{due_str} -- {days_remain} day(s) away!",
-                              font= ("Helvetica", 14),
-                              bg= alert_colour)
-            due_label.pack(anchor="w", padx=10)
+            self.due_label = Label(self.event_frame,
+                                   text=f"{due_str} -- {days_remain} day(s) away!",
+                                   font= ("Helvetica", 14),
+                                   bg= alert_colour)
+            self.due_label.pack(anchor="w", padx=10)
     
     def to_db(self):
         for widget in self.app_frame.winfo_children():
@@ -373,6 +382,15 @@ class StudyManagerApp():
 
     def to_edit_task(self, event):
         DisplayAddTask(self, event)
+        
+    def delete_task(self, event):
+        if event in self.events:
+            self.events.remove(event)
+
+        if self.focus_tab:
+            self.event_to_db()
+        else:
+            self.view_all_tasks()
 
 class DisplayAddTask():
     def __init__(self, partner, event):
