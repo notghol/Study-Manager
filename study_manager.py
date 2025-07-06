@@ -142,7 +142,7 @@ class StudyManagerApp():
         self.create_db_gui()
         
     def to_add_task(self):
-        DisplayAddTask(self)
+        DisplayAddTask(self, None)
     
     def event_to_db(self):
         if self.events:
@@ -341,7 +341,8 @@ class StudyManagerApp():
                                      height=20,
                                      width=20,
                                      bg=alert_colour,
-                                     borderless=1)
+                                     borderless=1,
+                                     command= lambda e=event: self.to_edit_task(e))
             self.expand_btn.pack(side="right")
 
             type_label = Label(top_row,
@@ -363,20 +364,28 @@ class StudyManagerApp():
                               font= ("Helvetica", 14),
                               bg= alert_colour)
             due_label.pack(anchor="w", padx=10)
-                  
+    
     def to_db(self):
         for widget in self.app_frame.winfo_children():
             widget.destroy()
         self.create_db_gui()
         self.event_to_db()
-    
-        
+
+    def to_edit_task(self, event):
+        DisplayAddTask(self, event)
+
 class DisplayAddTask():
-    def __init__(self, partner):
+    def __init__(self, partner, event):
         self.firstclick=True
+        self.event = event
         background = "#F8F5F2"
         med_font = font.Font(family="Helvetica", size=16)
         small_font = font.Font(family="Helvetica", size=14)
+        
+        if event:
+            action_text = "Edit Task"
+        else:
+            action_text = "Add Task"
         
         self.add_task_gui = Toplevel()
         self.add_task_gui.geometry("700x550")
@@ -385,9 +394,9 @@ class DisplayAddTask():
         partner.add_task_button.configure(state=DISABLED)
         self.add_task_gui.protocol("WM_DELETE_WINDOW",
                                lambda: self.close_add_task(partner))
-        
+
         title_label = Label(self.add_task_gui,
-                            text="Add Task",
+                            text=action_text,
                             font=font.Font(family="Helvetica", size=18, weight="bold"),
                             bg=background)
         title_label.pack(pady=20)
@@ -409,7 +418,9 @@ class DisplayAddTask():
             self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=self.rad_var, value=choice,
                         font=small_font, bg=background, anchor="w")
             self.rad_option.pack(anchor="w")
-            
+        
+        if event:
+            self.rad_var.set(event.type)
         self.subject_lb = Label(self.left_side_frame,
                                 text="Subject",
                                 bg=background,
@@ -420,6 +431,8 @@ class DisplayAddTask():
                                    font=small_font,
                                    width=25)
         self.subject_entry.pack(anchor="w", pady=5)
+        if event:
+            self.subject_entry.insert(0, event.subject)
     
         self.description_lb = Label(self.left_side_frame,
                                  text="Description",
@@ -433,9 +446,11 @@ class DisplayAddTask():
                                        width=25,
                                        height=5)
         self.description_entry.pack(anchor="w", pady=5)
-        self.description_entry.insert("1.0", "Optional")
-        self.description_entry.bind('<FocusIn>', lambda event : self.on_entry_click(event))
-
+        if event:
+            self.description_entry.insert("1.0", event.description)
+        else:
+            self.description_entry.insert("1.0", "Optional")
+            self.description_entry.bind('<FocusIn>', lambda event : self.on_entry_click(event))
 
         self.right_side_frame = Frame(self.main_frame, bg=background)
         self.right_side_frame.pack(side="right", fill="both", expand=True, padx=20)
@@ -448,9 +463,11 @@ class DisplayAddTask():
         
         self.calendar = Calendar(self.right_side_frame, selectmode="day", font=med_font)
         self.calendar.pack(pady=10)
-
+        if event:
+            self.calendar.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
+        
         submit_button = ctk.CTkButton(self.add_task_gui, 
-                               text="Add Task",
+                               text=action_text,
                                corner_radius=10,
                                command=lambda: self.add_task(partner),
                                font=ctk.CTkFont(family="Helvetica", size=16),
@@ -465,10 +482,16 @@ class DisplayAddTask():
         description = self.description_entry.get("1.0", "end")
         due_date = self.calendar.get_date()
         
-        new_event = Event(subject=subject, event_type=task_type, description=description, due_date=due_date)
-        partner.events.append(new_event)
-
-        print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
+        if self.event:
+            self.event.type = task_type
+            self.event.subject = subject
+            self.event.description = description
+            self.event.due_date = due_date
+        else:
+            new_event = Event(subject=subject, event_type=task_type, description=description, due_date=due_date)
+            partner.events.append(new_event)
+            print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
+        
         if partner.focus_tab == True:
             partner.event_to_db()
         else:
