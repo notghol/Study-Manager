@@ -6,20 +6,22 @@ import customtkinter as ctk
 from tkcalendar import Calendar
 
 class StudyManagerApp():
-    def create_db_gui(self):
+    def create_db_gui(self):      
         root.geometry("850x600")
-        root.configure(bg="#F8F5F2")
+        root.configure(bg="#313131")
         self.focus_tab = True
         
         red_alert = "#AD4849"
         yellow_alert = "#CFB353"
+        
+        large_font = font.Font(family="Helvetica", size=14)
         
         root.grid_columnconfigure(0, weight=1)
         root.grid_rowconfigure(0, weight=1)
         
     
         self.button_frame = Frame(self.app_frame,
-                                  bg="#F8F5F2")
+                                  bg=self.background)
         self.button_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
         self.button_frame.grid_columnconfigure(0, weight=0)
         self.button_frame.grid_columnconfigure(1, weight=0)
@@ -29,7 +31,8 @@ class StudyManagerApp():
         
         self.save_button = Button(self.button_frame,
                                 text="Save",
-                                bg="#F5F5F5",
+                                bg=self.btn_background,
+                                fg=self.text_colour,
                                 width=70,
                                 height=30,  
                                 borderless=1,
@@ -39,7 +42,8 @@ class StudyManagerApp():
 
         self.load_button = Button(self.button_frame,
                                 text="Load",
-                                bg="#F5F5F5",
+                                bg=self.btn_background,
+                                fg=self.text_colour,
                                 width=70,
                                 height=30,
                                 borderless=1,
@@ -48,7 +52,8 @@ class StudyManagerApp():
         
         self.all_tasks_button = Button(self.button_frame,
                                        text="All Tasks",
-                                       bg="#F5F5F5",
+                                       bg=self.btn_background,
+                                       fg=self.text_colour,
                                        width=120,
                                        height=30,
                                        borderless=1,
@@ -58,10 +63,11 @@ class StudyManagerApp():
         self.db_label = Label(self.app_frame, 
                               text="Dashboard",
                               font=("Helvetica", "20"),
-                              bg="#F8F5F2")
+                              bg=self.background,
+                              fg=self.text_colour)
         self.db_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
         
-        self.db_holder = Frame(self.app_frame, bg="#F8F5F2")
+        self.db_holder = Frame(self.app_frame, bg=self.background)
         self.db_holder.grid(row=2, column=0, sticky="nw")
 
         self.db_task_frame = ctk.CTkFrame(self.db_holder,
@@ -73,7 +79,10 @@ class StudyManagerApp():
                                           border_width=1)
         self.db_task_frame.grid(row=0, column=0, padx=20, pady=10, sticky="w")
         self.db_task_frame.grid_propagate(False)
-        Label(self.db_task_frame, text="No upcoming events.", bg=red_alert).grid(pady=10, padx=10)
+        Label(self.db_task_frame,
+              text="No upcoming events.",
+              bg=red_alert,
+              fg=self.text_colour).grid(pady=10, padx=10)
 
         self.db2_task_frame = ctk.CTkFrame(self.db_holder,
                                            corner_radius=20,
@@ -84,32 +93,39 @@ class StudyManagerApp():
                                            border_width=1)
         self.db2_task_frame.grid(row=1, column=0, padx=20, pady=10, sticky="w")
         self.db2_task_frame.grid_propagate(False)
-        Label(self.db2_task_frame, text="No upcoming events.", bg=yellow_alert).grid(pady=10, padx=10)
+        Label(self.db2_task_frame,
+              text="No upcoming events.",
+              bg=yellow_alert,
+              fg=self.text_colour).grid(pady=10, padx=10)
         
-        self.session_reminder = ctk.CTkFrame(self.db_holder,
+        self.color_switch_btn = ctk.CTkButton(self.db_holder,
+                                             text=self.change_colour_txt,
                                              corner_radius=20,
-                                             fg_color="#D5E8D4",
+                                             fg_color="#4C9C89",
+                                             text_color=self.text_colour,
                                              width=260,
                                              height=60,
-                                             border_color="#82B366",
-                                             border_width=1)
-        self.session_reminder.grid(row=2, column=0,padx=20, pady=30, sticky="s")
+                                             border_color="#000000",
+                                             border_width=1,
+                                             command=lambda: self.switch_colour())
+        self.color_switch_btn.grid(row=2, column=0,padx=20, pady=30, sticky="s")
         
         self.add_task_button = ctk.CTkButton(self.button_frame,
                                              text="+ Add Task",
                                              corner_radius=10,
                                              fg_color="#5DAC70",
+                                             text_color=self.text_colour,
                                              height=50,
                                              width=90, 
                                              command=lambda: self.to_add_task())
         self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
         self.add_task_button.configure(state=NORMAL)
         
-        large_font = font.Font(family="Helvetica", size=14)
+
         
         self.db_calendar_frame = Frame(self.app_frame,
                                     width=320,
-                                    bg="#F8F5F2")
+                                    bg=self.background)
         self.db_calendar_frame.grid(row=2, column=1, padx=10, pady=10, sticky="nw")
 
         self.db_calendar_frame.grid_rowconfigure(0, weight=0)
@@ -123,8 +139,8 @@ class StudyManagerApp():
                                         text="Select a date and click me",
                                         width=190,
                                         height=60,
-                                        fg_color="#FFFFFF",
-                                        text_color="#000000",
+                                        fg_color="#456D98",
+                                        text_color=self.text_colour,
                                         border_color= "#000000",
                                         border_width=1,
                                         corner_radius=10,
@@ -132,7 +148,16 @@ class StudyManagerApp():
         self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
     
     def __init__(self):
-        self.app_frame = Frame(bg="#F8F5F2")
+        self.light_mode = ["#F8F5F2", "#F5F5F5", "#000000", "Dark Mode"]
+        self.dark_mode = ["#313131", "#494444", "#FFFFFF",  "Light Mode"]
+        self.colours = self.light_mode
+        
+        self.background = self.colours[0]
+        self.btn_background = self.colours[1]
+        self.text_colour = self.colours[2]
+        self.change_colour_txt = self.colours[3]
+        
+        self.app_frame = Frame(bg=self.background)
         self.app_frame.grid(sticky=NSEW)
         self.app_frame.grid_columnconfigure(0, weight=1)
         self.app_frame.grid_columnconfigure(1, weight=1)
@@ -181,20 +206,23 @@ class StudyManagerApp():
             type_label = Label(frame,
                                text=type,
                                font=("Helvetica", 12, "bold"),
-                               bg=alert_colour)
+                               bg=alert_colour,
+                               fg=self.text_colour)
             type_label.pack(anchor="w", pady=4, padx=10)
             
             subject_label = Label(frame,
                                     text=subject,
                                     font=("Helvetica", 18),
-                                    bg=alert_colour)
+                                    bg=alert_colour,
+                                    fg=self.text_colour)
             subject_label.pack(anchor="w", pady=5, padx=10)
             
             due_str = event_date.strftime("%d/%m/%Y")
             due_label = Label(frame,
                               text=f"{due_str} -- {days_remain} day(s) away!",
                               font= ("Helvetica", 14),
-                              bg= alert_colour)
+                              bg= alert_colour,
+                              fg=self.text_colour)
             due_label.pack(anchor="w", padx=10)
 
     def cal_show_task(self):
@@ -241,25 +269,24 @@ class StudyManagerApp():
             widget.destroy()
         root.geometry("950x600")
         self.focus_tab = False
-        background = "#F8F5F2"
         
-        
-        self.button_frame = Frame(self.app_frame, bg=background)
+        self.button_frame = Frame(self.app_frame, bg=self.background)
         self.button_frame.pack(fill="x")
         
         self.save_button = Button(self.button_frame,
                                 text="Save",
-                                bg="#F5F5F5",
+                                bg=self.background,
+                                fg=self.text_colour,
                                 width=70,
                                 height=30,  
                                 borderless=1,
-                                command=lambda: self.save_data())  
-    
+                                command=lambda: self.save_data())
         self.save_button.pack(side="left")
 
         self.load_button = Button(self.button_frame,
                                 text="Load",
-                                bg="#F5F5F5",
+                                bg=self.background,
+                                fg=self.text_colour,
                                 width=70,
                                 height=30,
                                 borderless=1,
@@ -268,7 +295,8 @@ class StudyManagerApp():
         
         self.db_button = Button(self.button_frame,
                                        text="Dashboard",
-                                       bg="#F5F5F5",
+                                       bg=self.background,
+                                       fg=self.text_colour,
                                        width=120,
                                        height=30,
                                        borderless=1,
@@ -279,29 +307,30 @@ class StudyManagerApp():
                                         text="+ Add Task",
                                         corner_radius=10,
                                         fg_color="#5DAC70",
+                                        text_color=self.text_colour,
                                         height=50,
                                         width=90, 
                                         command=lambda: self.to_add_task())
         self.add_task_button.pack(side="right", padx=10, pady=15)
         self.add_task_button.configure(state=NORMAL)
         
-        self.left_frame = Frame(self.app_frame, bg=background)
+        self.left_frame = Frame(self.app_frame, bg=self.background)
         self.left_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         self.left_frame.pack_propagate(False)
         
-        self.mid_frame = Frame(self.app_frame, bg=background)
+        self.mid_frame = Frame(self.app_frame, bg=self.background)
         self.mid_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         self.mid_frame.pack_propagate(False)
         
-        self.right_frame = Frame(self.app_frame, bg=background)
+        self.right_frame = Frame(self.app_frame, bg=self.background)
         self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
         self.right_frame.pack_propagate(False)
         
         label_font = font.Font(family="Helvetica", size=16, weight="bold")
         
-        Label(self.left_frame, text="Imminent", font=label_font, bg=background).pack()
-        Label(self.mid_frame, text="Close", font=label_font, bg=background).pack()
-        Label(self.right_frame, text="Far", font=label_font, bg=background).pack()
+        Label(self.left_frame, text="Imminent", font=label_font, bg=self.background, fg=self.text_colour).pack()
+        Label(self.mid_frame, text="Close", font=label_font, bg=self.background, fg=self.text_colour).pack()
+        Label(self.right_frame, text="Far", font=label_font, bg=self.background, fg=self.text_colour).pack()
         
         today = datetime.today()
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
@@ -341,6 +370,7 @@ class StudyManagerApp():
                                      height=20,
                                      width=20,
                                      bg=alert_colour,
+                                     fg=self.text_colour,
                                      borderless=1,
                                      command=lambda e=event: self.delete_task(e))
             self.delete_btn.pack(side="right")
@@ -350,6 +380,7 @@ class StudyManagerApp():
                                      height=20,
                                      width=20,
                                      bg=alert_colour,
+                                     fg=self.text_colour,
                                      borderless=1,
                                      command= lambda e=event: self.to_edit_task(e))
             self.expand_btn.pack(side="right")
@@ -357,21 +388,24 @@ class StudyManagerApp():
             self.type_label = Label(self.top_row,
                                     text=type,
                                     font=("Helvetica", 12, "bold"),
-                                    bg=alert_colour)
+                                    bg=alert_colour,
+                                    fg=self.text_colour)
             self.type_label.pack(anchor="w")
 
             
             self.subject_label = Label(self.event_frame,
                                        text=subject,
                                        font=("Helvetica", 18),
-                                       bg=alert_colour)
+                                       bg=alert_colour,
+                                       fg=self.text_colour)
             self.subject_label.pack(anchor="w", pady=5, padx=10)
             
             due_str = event_date.strftime("%d/%m/%Y")
             self.due_label = Label(self.event_frame,
                                    text=f"{due_str} -- {days_remain} day(s) away!",
                                    font= ("Helvetica", 14),
-                                   bg= alert_colour)
+                                   bg= alert_colour,
+                                   fg=self.text_colour)
             self.due_label.pack(anchor="w", padx=10)
     
     def to_db(self):
@@ -392,11 +426,41 @@ class StudyManagerApp():
         else:
             self.view_all_tasks()
 
+    def switch_colour(self):
+        if self.colours == self.light_mode:
+            self.colours = self.dark_mode
+        else:
+            self.colours = self.light_mode
+            
+        self.background = self.colours[0]
+        self.btn_background = self.colours[1]
+        self.text_colour = self.colours[2]
+        self.change_colour_txt = self.colours[3]
+        
+        
+        self.app_frame.destroy()
+
+        self.app_frame = Frame(root, bg=self.background)
+        self.app_frame.grid(sticky=NSEW)
+        self.app_frame.grid_columnconfigure(0, weight=1)
+        self.app_frame.grid_columnconfigure(1, weight=1)
+        self.app_frame.grid_rowconfigure(2, weight=0)
+        self.app_frame.grid_rowconfigure(3, weight=0)
+        
+        if self.focus_tab:
+            self.create_db_gui()
+            self.event_to_db()
+        else:
+            self.view_all_tasks()
 class DisplayAddTask():
     def __init__(self, partner, event):
         self.firstclick=True
         self.event = event
-        background = "#F8F5F2"
+        
+        self.colours = partner.colours
+        background = self.colours[0]
+        text_colour = self.colours[2]
+
         med_font = font.Font(family="Helvetica", size=16)
         small_font = font.Font(family="Helvetica", size=14)
         
@@ -416,7 +480,8 @@ class DisplayAddTask():
         title_label = Label(self.add_task_gui,
                             text=action_text,
                             font=font.Font(family="Helvetica", size=18, weight="bold"),
-                            bg=background)
+                            bg=background,
+                            fg=text_colour)
         title_label.pack(pady=20)
 
         self.main_frame = Frame(self.add_task_gui, bg=background)
@@ -428,21 +493,24 @@ class DisplayAddTask():
         self.task_type_label = Label(self.left_side_frame, 
                                      text="Choose type of task:",
                                      bg=background,
-                                     font=med_font)
+                                     font=med_font,
+                                     fg=text_colour)
         self.task_type_label.pack(anchor="w", pady=10)
 
         self.rad_var = StringVar()
         for choice in ["Exam", "Assignment", "Homework", "Study Session"]:
             self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=self.rad_var, value=choice,
-                        font=small_font, bg=background, anchor="w")
+                        font=small_font, bg=background, anchor="w", fg=text_colour)
             self.rad_option.pack(anchor="w")
         
         if event:
             self.rad_var.set(event.type)
+            
         self.subject_lb = Label(self.left_side_frame,
                                 text="Subject",
                                 bg=background,
-                                font=med_font)
+                                font=med_font,
+                                fg=text_colour)
         self.subject_lb.pack(anchor="w", pady=10)
         
         self.subject_entry = Entry(self.left_side_frame,
@@ -455,7 +523,8 @@ class DisplayAddTask():
         self.description_lb = Label(self.left_side_frame,
                                  text="Description",
                                  bg=background,
-                                 font=med_font)
+                                 font=med_font,
+                                 fg=text_colour)
         self.description_lb.pack(anchor="w", pady=10)
         
         self.description_entry = Text(self.left_side_frame, 
@@ -476,6 +545,7 @@ class DisplayAddTask():
         self.due_date_lb = Label(self.right_side_frame,
                                  text="Set Due Date",
                                  bg=background,
+                                 fg=text_colour,
                                  font=med_font)
         self.due_date_lb.pack(pady=10)
         
@@ -490,6 +560,7 @@ class DisplayAddTask():
                                command=lambda: self.add_task(partner),
                                font=ctk.CTkFont(family="Helvetica", size=16),
                                fg_color="#5DAC70",
+                               text_color=text_colour,
                                width=140,
                                height=70)
         submit_button.pack(pady=20)
