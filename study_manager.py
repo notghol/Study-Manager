@@ -6,9 +6,17 @@ import customtkinter as ctk
 from tkcalendar import Calendar
 
 class StudyManagerApp():
-    def create_db_gui(self):      
+    """Main Study Manager tab"""
+    
+    def create_db_gui(self):
+        """Creates the UI of the dashboard"""   
+        
+        # Configures the window
         root.geometry("850x600")
         root.configure(bg="#313131")
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_rowconfigure(0, weight=1)
+        
         self.focus_tab = True
         
         red_alert = "#AD4849"
@@ -16,10 +24,7 @@ class StudyManagerApp():
         
         large_font = font.Font(family="Helvetica", size=14)
         
-        root.grid_columnconfigure(0, weight=1)
-        root.grid_rowconfigure(0, weight=1)
-        
-    
+        # Changes the grid on the button frame to adjust button spacing
         self.button_frame = Frame(self.app_frame,
                                   bg=self.background)
         self.button_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
@@ -28,7 +33,7 @@ class StudyManagerApp():
         self.button_frame.grid_columnconfigure(2, weight=0)
         self.button_frame.grid_columnconfigure(3, weight=1)  
 
-        
+        # Creates basic UI layout
         self.save_button = Button(self.button_frame,
                                 text="Save",
                                 bg=self.btn_background,
@@ -121,8 +126,6 @@ class StudyManagerApp():
         self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
         self.add_task_button.configure(state=NORMAL)
         
-
-        
         self.db_calendar_frame = Frame(self.app_frame,
                                     width=320,
                                     bg=self.background)
@@ -148,6 +151,7 @@ class StudyManagerApp():
         self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
     
     def __init__(self):
+        """Sets the main frame where the UI content is on"""
         self.light_mode = ["#F8F5F2", "#F5F5F5", "#000000", "Dark Mode"]
         self.dark_mode = ["#313131", "#494444", "#FFFFFF",  "Light Mode"]
         self.colours = self.light_mode
@@ -167,9 +171,13 @@ class StudyManagerApp():
         self.create_db_gui()
         
     def to_add_task(self):
+        """Calls class to add a task"""
         DisplayAddTask(self, None)
     
     def event_to_db(self):
+        """Refreshes the dashboard page showing new events"""
+        
+        # Clears all the content in the DB frames 
         if self.events:
             for frame in [self.db_task_frame, self.db2_task_frame]:
                 for widget in frame.winfo_children():
@@ -177,7 +185,10 @@ class StudyManagerApp():
 
         today = datetime.today()
         
+        # Sorts events from earliest to latest in a list
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
+        
+        # Add the first 2 earliest events to dashboard
         count = 0
         for event in earliest_events[:2]:
             count +=1
@@ -188,6 +199,7 @@ class StudyManagerApp():
             event_date = datetime.strptime(event.due_date, "%m/%d/%y")
             days_remain = (event_date-today).days
 
+            #
             if days_remain <= 3:
                 alert_colour = "#AD4849"
             elif days_remain >= 4 and days_remain <=7:
@@ -452,10 +464,12 @@ class StudyManagerApp():
             self.event_to_db()
         else:
             self.view_all_tasks()
+
 class DisplayAddTask():
     def __init__(self, partner, event):
         self.firstclick=True
         self.event = event
+        today = datetime.today()
         
         self.colours = partner.colours
         background = self.colours[0]
@@ -546,10 +560,13 @@ class DisplayAddTask():
                                  text="Set Due Date",
                                  bg=background,
                                  fg=text_colour,
-                                 font=med_font)
+                                 font=med_font,)
         self.due_date_lb.pack(pady=10)
         
-        self.calendar = Calendar(self.right_side_frame, selectmode="day", font=med_font)
+        self.calendar = Calendar(self.right_side_frame, 
+                                 selectmode="day",
+                                 font=med_font,
+                                 mindate=today)
         self.calendar.pack(pady=10)
         if event:
             self.calendar.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
@@ -570,6 +587,14 @@ class DisplayAddTask():
         subject = self.subject_entry.get()
         description = self.description_entry.get("1.0", "end")
         due_date = self.calendar.get_date()
+        
+        if task_type == "":
+            messagebox.showerror("Missing Info", "Please select a task type.")
+            return
+
+        if subject == "":
+            messagebox.showerror("Missing Info", "Please enter a subject.")
+            return
         
         if self.event:
             self.event.type = task_type
@@ -599,8 +624,7 @@ class DisplayAddTask():
         
         partner.add_task_button.configure(state=NORMAL)
         self.add_task_gui.destroy()
-
-    
+ 
 class Event():
     def __init__(self, subject, event_type, description, due_date):
         self.subject = subject

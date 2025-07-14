@@ -1,6 +1,3 @@
-
-Dark mode
-
 Boundary/error fixes
-
+comment and convention check
 Testing tables
