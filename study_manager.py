@@ -136,6 +136,7 @@ class StudyManagerApp():
         self.db_calendar_frame.grid_columnconfigure(0, weight=1)
 
         self.calendar = Calendar(self.db_calendar_frame, selectmode="day", font=large_font)
+        self.change_cal_colour(self.calendar)  # Chooses dark or light colour for calendar
         self.calendar.grid(row=0, column=0)
 
         self.found_event_button = ctk.CTkButton(self.db_calendar_frame,
@@ -508,6 +509,45 @@ class StudyManagerApp():
         else:
             self.view_all_tasks()
 
+    def change_cal_colour(self, calendar):
+        """Change colour of calendar based on dark or light mode"""
+        if self.colours == self.dark_mode:
+            calendar.configure(background='#2e2e2e',
+                               foreground='white',
+                               headersbackground='#1c1c1c',
+                               headersforeground='white',
+                               selectbackground='#4a90e2',
+                               selectforeground='white',
+                               normalbackground='#2e2e2e',
+                               normalforeground='white',
+                               weekendbackground='#3e3e3e',
+                               weekendforeground='white',
+                               othermonthbackground='#1c1c1c',
+                               othermonthforeground='gray',
+                               bordercolor='black',
+                               disableddaybackground="#1c1c1c",
+                               disableddayforeground="#gray",
+                               tooltipbackground="black",
+                               tooltipforeground="white")
+        else:
+            calendar.configure(background='white',
+                               foreground='black',
+                               headersbackground='lightgray',
+                               headersforeground='black',
+                               selectbackground='#4a90e2',
+                               selectforeground='white',
+                               normalbackground='white',
+                               normalforeground='black',
+                               weekendbackground='white',
+                               weekendforeground='black',
+                               othermonthbackground='lightgray',
+                               othermonthforeground='gray',
+                               bordercolor='black',
+                               disableddaybackground='lightgray',
+                               disableddayforeground='gray',
+                               tooltipbackground='white',
+                               tooltipforeground='black')
+
 class DisplayAddTask():
     """Window that lets user add and edit tasks."""
     
@@ -618,6 +658,7 @@ class DisplayAddTask():
                                  selectmode="day",
                                  font=med_font,
                                  mindate=today)
+        partner.change_cal_colour(self.calendar)  # Choose dark of light colours
         self.calendar.pack(pady=10)
         if event:
             self.calendar.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
