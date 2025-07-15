@@ -139,7 +139,7 @@ class StudyManagerApp():
         self.change_cal_colour(self.cal)  # Chooses dark or light colour for calendar
         self.cal.grid(row=0, column=0)
 
-        self.found_event_button = ctk.CTkButton(self.db_cal_frame,
+        self.found_event_btn = ctk.CTkButton(self.db_cal_frame,
                                                 text="Select a date and click me",
                                                 width=190,
                                                 height=60,
@@ -149,7 +149,7 @@ class StudyManagerApp():
                                                 border_width=1,
                                                 corner_radius=10,
                                                 command=lambda: self.cal_show_task())
-        self.found_event_button.grid(row=1, column=0, pady=50, sticky="s")
+        self.found_event_btn.grid(row=1, column=0, pady=50, sticky="s")
 
     def __init__(self):
         """Initialize main frame and colour theme."""
@@ -185,7 +185,6 @@ class StudyManagerApp():
                     widget.destroy()
 
         today = datetime.today().date()
-        print(today)
         # Sorts events from earliest to latest in a list
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
 
@@ -254,10 +253,10 @@ class StudyManagerApp():
         try:
             event = found_event[0]
             event_str = f"{event.type} for {event.subject} on {event.due_date}"
-            self.found_event_button.configure(text=event_str)
+            self.found_event_btn.configure(text=event_str)
         # If not event is found
         except IndexError:
-            self.found_event_button.configure(text="No event found on that day.")
+            self.found_event_btn.configure(text="No event found on that day.")
 
     def save_data(self):
         """Save all events as a .txt file."""
