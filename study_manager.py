@@ -126,20 +126,20 @@ class StudyManagerApp():
         self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
         self.add_task_button.configure(state=NORMAL)
 
-        self.db_calendar_frame = Frame(self.app_frame,
+        self.db_cal_frame = Frame(self.app_frame,
                                        width=320,
                                        bg=self.background)
-        self.db_calendar_frame.grid(row=2, column=1, padx=10, pady=10, sticky="nw")
+        self.db_cal_frame.grid(row=2, column=1, padx=10, pady=10, sticky="nw")
 
-        self.db_calendar_frame.grid_rowconfigure(0, weight=0)
-        self.db_calendar_frame.grid_rowconfigure(1, weight=0)
-        self.db_calendar_frame.grid_columnconfigure(0, weight=1)
+        self.db_cal_frame.grid_rowconfigure(0, weight=0)
+        self.db_cal_frame.grid_rowconfigure(1, weight=0)
+        self.db_cal_frame.grid_columnconfigure(0, weight=1)
 
-        self.calendar = Calendar(self.db_calendar_frame, selectmode="day", font=large_font)
-        self.change_cal_colour(self.calendar)  # Chooses dark or light colour for calendar
-        self.calendar.grid(row=0, column=0)
+        self.cal = Calendar(self.db_cal_frame, selectmode="day", font=large_font)
+        self.change_cal_colour(self.cal)  # Chooses dark or light colour for calendar
+        self.cal.grid(row=0, column=0)
 
-        self.found_event_button = ctk.CTkButton(self.db_calendar_frame,
+        self.found_event_button = ctk.CTkButton(self.db_cal_frame,
                                                 text="Select a date and click me",
                                                 width=190,
                                                 height=60,
@@ -184,8 +184,8 @@ class StudyManagerApp():
                 for widget in frame.winfo_children():
                     widget.destroy()
 
-        today = datetime.today()
-
+        today = datetime.today().date()
+        print(today)
         # Sorts events from earliest to latest in a list
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
 
@@ -197,7 +197,7 @@ class StudyManagerApp():
             subject = f"{event.subject}"
             due_date = f"{event.due_date}"
 
-            event_date = datetime.strptime(event.due_date, "%m/%d/%y")
+            event_date = datetime.strptime(event.due_date, "%m/%d/%y").date()
             days_remain = (event_date-today).days
 
             # Change colour based on importancy
@@ -241,7 +241,7 @@ class StudyManagerApp():
 
     def cal_show_task(self):
         """Display event info for selected calendar date."""
-        date = self.calendar.get_date()
+        date = self.cal.get_date()
         found_event = []
 
         # Finds event with same date as calendar choice
@@ -509,10 +509,10 @@ class StudyManagerApp():
         else:
             self.view_all_tasks()
 
-    def change_cal_colour(self, calendar):
+    def change_cal_colour(self, cal):
         """Change colour of calendar based on dark or light mode"""
         if self.colours == self.dark_mode:
-            calendar.configure(background='#2e2e2e',
+            cal.configure(background='#2e2e2e',
                                foreground='white',
                                headersbackground='#1c1c1c',
                                headersforeground='white',
@@ -530,7 +530,7 @@ class StudyManagerApp():
                                tooltipbackground="black",
                                tooltipforeground="white")
         else:
-            calendar.configure(background='white',
+            cal.configure(background='white',
                                foreground='black',
                                headersbackground='lightgray',
                                headersforeground='black',
@@ -654,12 +654,12 @@ class DisplayAddTask():
                                  font=med_font,)
         self.due_date_lb.pack(pady=10)
 
-        self.calendar = Calendar(self.right_side_frame,
+        self.cal = Calendar(self.right_side_frame,
                                  selectmode="day",
                                  font=med_font,
                                  mindate=today)
-        partner.change_cal_colour(self.calendar)  # Choose dark of light colours
-        self.calendar.pack(pady=10)
+        partner.change_cal_colour(self.cal)  # Choose dark of light colours
+        self.cal.pack(pady=10)
         if event:
             self.calendar.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
 
