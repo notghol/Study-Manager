@@ -660,7 +660,7 @@ class DisplayAddTask():
         partner.change_cal_colour(self.cal)  # Choose dark of light colours
         self.cal.pack(pady=10)
         if event:
-            self.calendar.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
+            self.cal.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
 
         submit_button = ctk.CTkButton(self.add_task_gui, 
                                       text=action_text,
@@ -679,7 +679,7 @@ class DisplayAddTask():
         task_type = self.rad_var.get()
         subject = self.subject_entry.get()
         description = self.description_entry.get("1.0", "end")
-        due_date = self.calendar.get_date()
+        due_date = self.cal.get_date()
 
         # If nothing has been entered
         if task_type == "":
