@@ -194,7 +194,6 @@ class StudyManagerApp():
             count += 1
             type = f"{event.type}"
             subject = f"{event.subject}"
-            due_date = f"{event.due_date}"
 
             event_date = datetime.strptime(event.due_date, "%m/%d/%y").date()
             days_remain = (event_date-today).days
@@ -247,12 +246,17 @@ class StudyManagerApp():
         for event in self.events:
             if date == event.due_date:
                 found_event.append(event)
-                break
 
         # If event is found, show it on UI
         try:
             event = found_event[0]
-            event_str = f"{event.type} for {event.subject} on {event.due_date}"
+            event_date = datetime.strptime(event.due_date, "%m/%d/%y").date()
+            due_str = event_date.strftime("%d/%m/%Y")
+            # if multiple events are on the same day
+            if len(found_event) > 1:
+                event_str = f"Multiple events on this day. Here is one:\n{event.type} for {event.subject} on {due_str}."
+            else:
+                event_str = f"{event.type} for {event.subject} on {due_str}."
             self.found_event_btn.configure(text=event_str)
         # If not event is found
         except IndexError:
