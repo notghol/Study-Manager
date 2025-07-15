@@ -327,33 +327,33 @@ class StudyManagerApp():
         self.save_button.pack(side="left")
 
         self.load_button = Button(self.button_frame,
-                                text="Load",
-                                bg=self.background,
-                                fg=self.text_colour,
-                                width=70,
-                                height=30,
-                                borderless=1,
-                                command=lambda: self.load_data())
+                                  text="Load",
+                                  bg=self.background,
+                                  fg=self.text_colour,
+                                  width=70,
+                                  height=30,
+                                  borderless=1,
+                                  command=lambda: self.load_data())
         self.load_button.pack(side="left")
 
         self.db_button = Button(self.button_frame,
-                                       text="Dashboard",
-                                       bg=self.background,
-                                       fg=self.text_colour,
-                                       width=120,
-                                       height=30,
-                                       borderless=1,
-                                       command=lambda: self.to_db())
+                                text="Dashboard",
+                                bg=self.background,
+                                fg=self.text_colour,
+                                width=120,
+                                height=30,
+                                borderless=1,
+                                command=lambda: self.to_db())
         self.db_button.pack(padx=20, side="left")
 
         self.add_task_button = ctk.CTkButton(self.button_frame,
-                                        text="+ Add Task",
-                                        corner_radius=10,
-                                        fg_color="#5DAC70",
-                                        text_color=self.text_colour,
-                                        height=50,
-                                        width=90, 
-                                        command=lambda: self.to_add_task())
+                                             text="+ Add Task",
+                                             corner_radius=10,
+                                             fg_color="#5DAC70",
+                                             text_color=self.text_colour,
+                                             height=50,
+                                             width=90, 
+                                             command=lambda: self.to_add_task())
         self.add_task_button.pack(side="right", padx=10, pady=15)
         self.add_task_button.configure(state=NORMAL)
 
@@ -368,21 +368,21 @@ class StudyManagerApp():
         self.left_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
 
         self.mid_frame = ctk.CTkScrollableFrame(self.app_frame,
-                                                 orientation="vertical",
-                                                 fg_color=self.background,
-                                                 label_text="Close",
-                                                 label_text_color=self.text_colour,
-                                                 label_fg_color=self.background,
-                                                 label_font=scroll_label_font)
+                                                orientation="vertical",
+                                                fg_color=self.background,
+                                                label_text="Close",
+                                                label_text_color=self.text_colour,
+                                                label_fg_color=self.background,
+                                                label_font=scroll_label_font)
         self.mid_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
 
         self.right_frame = ctk.CTkScrollableFrame(self.app_frame,
-                                                 orientation="vertical",
-                                                 fg_color=self.background,
-                                                 label_text="Far",
-                                                 label_text_color=self.text_colour,
-                                                 label_fg_color=self.background,
-                                                 label_font=scroll_label_font)
+                                                  orientation="vertical",
+                                                  fg_color=self.background,
+                                                  label_text="Far",
+                                                  label_text_color=self.text_colour,
+                                                  label_fg_color=self.background,
+                                                  label_font=scroll_label_font)
         self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
 
         today = datetime.today().date()
@@ -410,12 +410,12 @@ class StudyManagerApp():
                 date_frame = self.right_frame
 
             event_frame = ctk.CTkFrame(date_frame,
-                                            corner_radius=20,
-                                            border_color="black",
-                                            border_width=1,
-                                            width=300,
-                                            height=110,
-                                            fg_color=alert_colour)
+                                       corner_radius=20,
+                                       border_color="black",
+                                       border_width=1,
+                                       width=300,
+                                       height=110,
+                                       fg_color=alert_colour)
             event_frame.pack(pady=10)
             event_frame.pack_propagate(False)
 
@@ -424,45 +424,45 @@ class StudyManagerApp():
             top_row.pack(fill="x", pady=5, padx=10)
 
             delete_btn = Button(top_row,
-                                     text="x",
-                                     height=20,
-                                     width=20,
-                                     bg=alert_colour,
-                                     fg=self.text_colour,
-                                     borderless=1,
-                                     command=lambda e=event: self.delete_task(e))
+                                text="x",
+                                height=20,
+                                width=20,
+                                bg=alert_colour,
+                                fg=self.text_colour,
+                                borderless=1,
+                                command=lambda e=event: self.delete_task(e))
             delete_btn.pack(side="right")
 
             expand_btn = Button(top_row,
-                                     text="↵",
-                                     height=20,
-                                     width=20,
-                                     bg=alert_colour,
-                                     fg=self.text_colour,
-                                     borderless=1,
-                                     command= lambda e=event: self.to_edit_task(e))
+                                text="↵",
+                                height=20,
+                                width=20,
+                                bg=alert_colour,
+                                fg=self.text_colour,
+                                borderless=1,
+                                command= lambda e=event: self.to_edit_task(e))
             expand_btn.pack(side="right")
 
             type_label = Label(top_row,
-                                    text=type,
-                                    font=("Helvetica", 12, "bold"),
-                                    bg=alert_colour,
-                                    fg=self.text_colour)
+                               text=type,
+                               font=("Helvetica", 12, "bold"),
+                               bg=alert_colour,
+                               fg=self.text_colour)
             type_label.pack(anchor="w")
 
             subject_label = Label(event_frame,
-                                       text=subject,
-                                       font=("Helvetica", 18),
-                                       bg=alert_colour,
-                                       fg=self.text_colour)
+                                  text=subject,
+                                  font=("Helvetica", 18),
+                                  bg=alert_colour,
+                                  fg=self.text_colour)
             subject_label.pack(anchor="w", pady=5, padx=10)
 
             due_str = event_date.strftime("%d/%m/%Y")
             due_label = Label(event_frame,
-                                   text=f"{due_str} -- {days_remain} day(s) away!",
-                                   font= ("Helvetica", 14),
-                                   bg= alert_colour,
-                                   fg=self.text_colour)
+                              text=f"{due_str} -- {days_remain} day(s) away!",
+                              font=("Helvetica", 14),
+                              bg=alert_colour,
+                              fg=self.text_colour)
             due_label.pack(anchor="w", padx=10)
             # Fixing text errors 
             if days_remain == 0:
@@ -639,17 +639,17 @@ class DisplayAddTask():
             self.subject_entry.insert(0, event.subject)
 
         self.description_lb = Label(self.left_side_frame,
-                                 text="Description",
-                                 bg=background,
-                                 font=med_font,
-                                 fg=text_colour)
+                                    text="Description",
+                                    bg=background,
+                                    font=med_font,
+                                    fg=text_colour)
         self.description_lb.pack(anchor="w", pady=10)
 
         self.description_entry = Text(self.left_side_frame,
-                                       font=small_font,
-                                       bg="#FFFFFF",
-                                       width=25,
-                                       height=5)
+                                      font=small_font,
+                                      bg="#FFFFFF",
+                                      width=25,
+                                      height=5)
         self.description_entry.pack(anchor="w", pady=5)
         # if editing event insert it's description.
         if event:
@@ -670,9 +670,9 @@ class DisplayAddTask():
         self.due_date_lb.pack(pady=10)
 
         self.cal = Calendar(self.right_side_frame,
-                                 selectmode="day",
-                                 font=med_font,
-                                 mindate=today)
+                            selectmode="day",
+                            font=med_font,
+                            mindate=today)
         partner.change_cal_colour(self.cal)  # Choose dark of light colours
         self.cal.pack(pady=10)
         if event:
