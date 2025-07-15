@@ -300,7 +300,7 @@ class StudyManagerApp():
 
         self.focus_tab = False
 
-        label_font = font.Font(family="Helvetica", size=16, weight="bold")
+        scroll_label_font = ("Helvetica", 16, "bold")
 
         # Sets up button frame and creates buttons
         self.button_frame = Frame(self.app_frame, bg=self.background)
@@ -347,23 +347,33 @@ class StudyManagerApp():
         self.add_task_button.pack(side="right", padx=10, pady=15)
         self.add_task_button.configure(state=NORMAL)
 
-        # Sets up the 3 frames
-        self.left_frame = Frame(self.app_frame, bg=self.background)
+        # Sets up the 3 main scrollable frames
+        self.left_frame = ctk.CTkScrollableFrame(self.app_frame,
+                                                 orientation="vertical",
+                                                 fg_color=self.background,
+                                                 label_text="Imminent",
+                                                 label_text_color=self.text_colour,
+                                                 label_fg_color=self.background,
+                                                 label_font=scroll_label_font,)
         self.left_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
-        self.left_frame.pack_propagate(False)
 
-        self.mid_frame = Frame(self.app_frame, bg=self.background)
+        self.mid_frame = ctk.CTkScrollableFrame(self.app_frame,
+                                                 orientation="vertical",
+                                                 fg_color=self.background,
+                                                 label_text="Close",
+                                                 label_text_color=self.text_colour,
+                                                 label_fg_color=self.background,
+                                                 label_font=scroll_label_font)
         self.mid_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
-        self.mid_frame.pack_propagate(False)
 
-        self.right_frame = Frame(self.app_frame, bg=self.background)
+        self.right_frame = ctk.CTkScrollableFrame(self.app_frame,
+                                                 orientation="vertical",
+                                                 fg_color=self.background,
+                                                 label_text="Far",
+                                                 label_text_color=self.text_colour,
+                                                 label_fg_color=self.background,
+                                                 label_font=scroll_label_font)
         self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
-        self.right_frame.pack_propagate(False)
-
-        # Adds labels to allocated frame
-        Label(self.left_frame, text="Imminent", font=label_font, bg=self.background, fg=self.text_colour).pack()
-        Label(self.mid_frame, text="Close", font=label_font, bg=self.background, fg=self.text_colour).pack()
-        Label(self.right_frame, text="Far", font=label_font, bg=self.background, fg=self.text_colour).pack()
 
         today = datetime.today()
         # Sorts events based on earliest date in a list
@@ -377,6 +387,7 @@ class StudyManagerApp():
             event_date = datetime.strptime(event.due_date, "%m/%d/%y")
             days_remain = (event_date-today).days
             
+            # Chooses what frame to put event in
             if days_remain <= 3:
                 alert_colour = "#AD4849"
                 date_frame = self.left_frame
@@ -657,7 +668,7 @@ class DisplayAddTask():
             partner.view_all_tasks()
         self.close_add_task(partner)
     
-    def on_entry_click(self):
+    def on_entry_click(self, event):
         """Remove optional text when user clicks description"""
         if self.firstclick:
             self.firstclick = False
