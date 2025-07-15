@@ -236,6 +236,12 @@ class StudyManagerApp():
                               bg= alert_colour,
                               fg=self.text_colour)
             due_label.pack(anchor="w", padx=10)
+            # fix text errors
+            if days_remain == 0:
+                due_label.configure(text=f"{due_str} -- Due TODAY!")
+            elif days_remain < 0:
+                overdue_days = (today-event_date).days
+                due_label.configure(text=f"{due_str} -- OVERDUE by {overdue_days} day(s)!")
 
     def cal_show_task(self):
         """Display event info for selected calendar date."""
@@ -379,7 +385,7 @@ class StudyManagerApp():
                                                  label_font=scroll_label_font)
         self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
 
-        today = datetime.today()
+        today = datetime.today().date()
         # Sorts events based on earliest date in a list
         earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
 
@@ -388,7 +394,7 @@ class StudyManagerApp():
             type = f"{event.type}"
             subject = f"{event.subject}"
 
-            event_date = datetime.strptime(event.due_date, "%m/%d/%y")
+            event_date = datetime.strptime(event.due_date, "%m/%d/%y").date()
             days_remain = (event_date-today).days
             
             # Chooses what frame to put event in
@@ -403,21 +409,21 @@ class StudyManagerApp():
                 alert_colour = "#5DAC70"
                 date_frame = self.right_frame
 
-            self.event_frame = ctk.CTkFrame(date_frame,
+            event_frame = ctk.CTkFrame(date_frame,
                                             corner_radius=20,
                                             border_color="black",
                                             border_width=1,
                                             width=300,
                                             height=110,
                                             fg_color=alert_colour)
-            self.event_frame.pack(pady=10)
-            self.event_frame.pack_propagate(False)
+            event_frame.pack(pady=10)
+            event_frame.pack_propagate(False)
 
             # Frame for delete and expand/edit button
-            self.top_row = Frame(self.event_frame, bg=alert_colour)
-            self.top_row.pack(fill="x", pady=5, padx=10)
+            top_row = Frame(event_frame, bg=alert_colour)
+            top_row.pack(fill="x", pady=5, padx=10)
 
-            self.delete_btn = Button(self.top_row,
+            delete_btn = Button(top_row,
                                      text="x",
                                      height=20,
                                      width=20,
@@ -425,9 +431,9 @@ class StudyManagerApp():
                                      fg=self.text_colour,
                                      borderless=1,
                                      command=lambda e=event: self.delete_task(e))
-            self.delete_btn.pack(side="right")
+            delete_btn.pack(side="right")
 
-            self.expand_btn = Button(self.top_row,
+            expand_btn = Button(top_row,
                                      text="↵",
                                      height=20,
                                      width=20,
@@ -435,29 +441,35 @@ class StudyManagerApp():
                                      fg=self.text_colour,
                                      borderless=1,
                                      command= lambda e=event: self.to_edit_task(e))
-            self.expand_btn.pack(side="right")
+            expand_btn.pack(side="right")
 
-            self.type_label = Label(self.top_row,
+            type_label = Label(top_row,
                                     text=type,
                                     font=("Helvetica", 12, "bold"),
                                     bg=alert_colour,
                                     fg=self.text_colour)
-            self.type_label.pack(anchor="w")
+            type_label.pack(anchor="w")
 
-            self.subject_label = Label(self.event_frame,
+            subject_label = Label(event_frame,
                                        text=subject,
                                        font=("Helvetica", 18),
                                        bg=alert_colour,
                                        fg=self.text_colour)
-            self.subject_label.pack(anchor="w", pady=5, padx=10)
+            subject_label.pack(anchor="w", pady=5, padx=10)
 
             due_str = event_date.strftime("%d/%m/%Y")
-            self.due_label = Label(self.event_frame,
+            due_label = Label(event_frame,
                                    text=f"{due_str} -- {days_remain} day(s) away!",
                                    font= ("Helvetica", 14),
                                    bg= alert_colour,
                                    fg=self.text_colour)
-            self.due_label.pack(anchor="w", padx=10)
+            due_label.pack(anchor="w", padx=10)
+            # Fixing text errors 
+            if days_remain == 0:
+                due_label.configure(text=f"{due_str} -- Due TODAY!")
+            elif days_remain < 0:
+                overdue_days = (today-event_date).days
+                due_label.configure(text=f"{due_str} -- OVERDUE by {overdue_days} day(s)!")
 
     def to_db(self):
         """Wipe tab and create dashboard."""
@@ -687,11 +699,14 @@ class DisplayAddTask():
 
         # If nothing has been entered
         if task_type == "":
-            messagebox.showerror("Missing Info", "Please select a task type")
+            messagebox.showerror("Missing Info", "Please select a task type.")
             return
         if subject == "":
-            messagebox.showerror("Missing Info", "Please enter a subject")
+            messagebox.showerror("Missing Info", "Please enter a subject.")
             return
+        # If the user does not click description box at all
+        if description.strip() == "Optional":
+            description = ""
 
         # Editing task
         if self.event:
