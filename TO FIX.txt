@@ -1,0 +1,3 @@
+change alert_colour to literals
+test the text fixes e.g. Tasks due today (Due TODAY!), Overdue tasks (OVERDUE by X days)
+

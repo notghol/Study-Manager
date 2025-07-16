@@ -11,7 +11,10 @@ class StudyManagerApp():
     """Main application class for study manager."""
 
     def create_db_gui(self):
-        """Create the UI of the dashboard."""
+        """Create the UI of the dashboard.
+           
+                
+        """
         # Configures the window
         root.geometry("850x600")
         root.configure(bg="#313131")
@@ -20,8 +23,8 @@ class StudyManagerApp():
 
         self.focus_tab = True
 
-        red_alert = "#AD4849"
-        yellow_alert = "#CFB353"
+        RED_ALERT = "#AD4849"
+        YELLOW_ALERT = "#CFB353"
 
         large_font = font.Font(family="Helvetica", size=14)
 
@@ -77,7 +80,7 @@ class StudyManagerApp():
 
         self.db_task_frame = ctk.CTkFrame(self.db_holder,
                                           corner_radius=20,
-                                          fg_color=red_alert,
+                                          fg_color=RED_ALERT,
                                           width=350,
                                           height=130,
                                           border_color="black",
@@ -86,12 +89,12 @@ class StudyManagerApp():
         self.db_task_frame.grid_propagate(False)
         Label(self.db_task_frame,
               text="No upcoming events.",
-              bg=red_alert,
+              bg=RED_ALERT,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.db2_task_frame = ctk.CTkFrame(self.db_holder,
                                            corner_radius=20,
-                                           fg_color=yellow_alert,
+                                           fg_color=YELLOW_ALERT,
                                            width=350,
                                            height=130,
                                            border_color="black",
@@ -100,7 +103,7 @@ class StudyManagerApp():
         self.db2_task_frame.grid_propagate(False)
         Label(self.db2_task_frame,
               text="No upcoming events.",
-              bg=yellow_alert,
+              bg=YELLOW_ALERT,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.color_switch_btn = ctk.CTkButton(self.db_holder,
@@ -162,7 +165,7 @@ class StudyManagerApp():
         self.text_colour = self.colours[2]
         self.change_colour_txt = self.colours[3]
 
-        # Creates and configures main frame
+        # Creates main frame and configures grid layout for aesthetics
         self.app_frame = Frame(bg=self.background)
         self.app_frame.grid(sticky=NSEW)
         self.app_frame.grid_columnconfigure(0, weight=1)
@@ -243,6 +246,13 @@ class StudyManagerApp():
                 overdue_days = (today-event_date).days
                 due_label.configure(text=f"{due_str} -- OVERDUE by {overdue_days} day(s)!")
 
+        # When only 1 event is logged, tell user
+        if count == 1:
+            Label(self.db2_task_frame,
+                  text="No more upcoming events.",
+                  bg="#CFB353",
+                  fg=self.text_colour).grid(pady=10, padx=10)
+
     def cal_show_task(self):
         """Display event info for selected calendar date."""
         date = self.cal.get_date()
@@ -284,6 +294,7 @@ class StudyManagerApp():
         self.events=[]
 
         # Processes saved data and adds it to event list
+
         with open(filepath, "r") as file:
             for line in file:
                 line=line.strip()
@@ -577,6 +588,7 @@ class DisplayAddTask():
         text_colour = self.colours[2]
 
         med_font = font.Font(family="Helvetica", size=16)
+        ctk_med_font = ctk.CTkFont(family="Helvetica", size=16)
         small_font = font.Font(family="Helvetica", size=14)
 
         # Chooses text based on action
@@ -678,11 +690,12 @@ class DisplayAddTask():
         if event:
             self.cal.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
 
+
         submit_button = ctk.CTkButton(self.add_task_gui, 
                                       text=action_text,
                                       corner_radius=10,
                                       command=lambda: self.add_task(partner),
-                                      font=ctk.CTkFont(family="Helvetica", size=16),
+                                      font=ctk_med_font,
                                       fg_color="#5DAC70",
                                       text_color=text_colour,
                                       width=140,
