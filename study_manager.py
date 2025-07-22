@@ -12,8 +12,7 @@ class StudyManagerApp():
 
     def create_db_gui(self):
         """Create the UI of the dashboard.
-           
-                
+
         """
         # Configures the window
         root.geometry("850x600")
@@ -23,8 +22,8 @@ class StudyManagerApp():
 
         self.focus_tab = True
 
-        RED_ALERT = "#AD4849"
-        YELLOW_ALERT = "#CFB353"
+        red_alert = "#AD4849"
+        yellow_alert = "#CFB353"
 
         large_font = font.Font(family="Helvetica", size=14)
 
@@ -80,7 +79,7 @@ class StudyManagerApp():
 
         self.db_task_frame = ctk.CTkFrame(self.db_holder,
                                           corner_radius=20,
-                                          fg_color=RED_ALERT,
+                                          fg_color=red_alert,
                                           width=350,
                                           height=130,
                                           border_color="black",
@@ -89,44 +88,47 @@ class StudyManagerApp():
         self.db_task_frame.grid_propagate(False)
         Label(self.db_task_frame,
               text="No upcoming events.",
-              bg=RED_ALERT,
+              bg=red_alert,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.db2_task_frame = ctk.CTkFrame(self.db_holder,
                                            corner_radius=20,
-                                           fg_color=YELLOW_ALERT,
+                                           fg_color=yellow_alert,
                                            width=350,
                                            height=130,
                                            border_color="black",
                                            border_width=1)
-        self.db2_task_frame.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        self.db2_task_frame.grid(row=1, column=0, padx=20,
+                                 pady=10, sticky="w")
         self.db2_task_frame.grid_propagate(False)
         Label(self.db2_task_frame,
               text="No upcoming events.",
-              bg=YELLOW_ALERT,
+              bg=yellow_alert,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.color_switch_btn = ctk.CTkButton(self.db_holder,
-                                              text=self.change_colour_txt,
-                                              corner_radius=20,
-                                              fg_color="#4C9C89",
-                                              text_color=self.text_colour,
-                                              width=260,
-                                              height=60,
-                                              border_color="#000000",
-                                              border_width=1,
-                                              command=lambda: self.switch_colour())
-        self.color_switch_btn.grid(row=2, column=0, padx=20, pady=30, sticky="s")
+                            text=self.change_colour_txt,
+                            corner_radius=20,
+                            fg_color="#4C9C89",
+                            text_color=self.text_colour,
+                            width=260,
+                            height=60,
+                            border_color="#000000",
+                            border_width=1,
+                            command=lambda: self.switch_colour())
+        self.color_switch_btn.grid(row=2, column=0, padx=20,
+                                   pady=30, sticky="s")
 
         self.add_task_button = ctk.CTkButton(self.button_frame,
-                                             text="+ Add Task",
-                                             corner_radius=10,
-                                             fg_color="#5DAC70",
-                                             text_color=self.text_colour,
-                                             height=50,
-                                             width=90,
-                                             command=lambda: self.to_add_task())
-        self.add_task_button.grid(row=0, column=3, padx=10, pady=15, sticky="e")
+                            text="+ Add Task",
+                            corner_radius=10,
+                            fg_color="#5DAC70",
+                            text_color=self.text_colour,
+                            height=50,
+                            width=90,
+                            command=lambda: self.to_add_task())
+        self.add_task_button.grid(row=0, column=3, padx=10,
+                                  pady=15, sticky="e")
         self.add_task_button.configure(state=NORMAL)
 
         self.db_cal_frame = Frame(self.app_frame,
@@ -138,20 +140,24 @@ class StudyManagerApp():
         self.db_cal_frame.grid_rowconfigure(1, weight=0)
         self.db_cal_frame.grid_columnconfigure(0, weight=1)
 
-        self.cal = Calendar(self.db_cal_frame, selectmode="day", font=large_font)
-        self.change_cal_colour(self.cal)  # Chooses dark or light colour for calendar
+        self.cal = Calendar(self.db_cal_frame,
+                            selectmode="day",
+                            font=large_font)
+        # Chooses dark or light colour for calendar
+        self.change_cal_colour(self.cal)
+        
         self.cal.grid(row=0, column=0)
 
         self.found_event_btn = ctk.CTkButton(self.db_cal_frame,
-                                                text="Select a date and click me",
-                                                width=190,
-                                                height=60,
-                                                fg_color="#456D98",
-                                                text_color=self.text_colour,
-                                                border_color="#000000",
-                                                border_width=1,
-                                                corner_radius=10,
-                                                command=lambda: self.cal_show_task())
+                            text="Select a date and click me",
+                            width=190,
+                            height=60,
+                            fg_color="#456D98",
+                            text_color=self.text_colour,
+                            border_color="#000000",
+                            border_width=1,
+                            corner_radius=10,
+                            command=lambda: self.cal_show_task())
         self.found_event_btn.grid(row=1, column=0, pady=50, sticky="s")
 
     def __init__(self):
@@ -189,7 +195,8 @@ class StudyManagerApp():
 
         today = datetime.today().date()
         # Sorts events from earliest to latest in a list
-        earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
+        earliest_events = sorted(self.events, key=lambda event: 
+            datetime.strptime(event.due_date, "%m/%d/%y"))
 
         # Add the first 2 earliest events to dashboard
         count = 0
@@ -244,7 +251,8 @@ class StudyManagerApp():
                 due_label.configure(text=f"{due_str} -- Due TODAY!")
             elif days_remain < 0:
                 overdue_days = (today-event_date).days
-                due_label.configure(text=f"{due_str} -- OVERDUE by {overdue_days} day(s)!")
+                due_label.configure(text=f"{due_str} -- OVERDUE by"+
+                                    " {overdue_days} day(s)!")
 
         # When only 1 event is logged, tell user
         if count == 1:
@@ -270,7 +278,8 @@ class StudyManagerApp():
             due_str = event_date.strftime("%d/%m/%Y")
             # if multiple events are on the same day
             if len(found_event) > 1:
-                event_str = f"Multiple events on this day. Here is one:\n{event.type} for {event.subject} on {due_str}."
+                event_str = (f"Multiple events on this day. Here is one: "+
+                "\n{event.type} for {event.subject} on {due_str}.")
             else:
                 event_str = f"{event.type} for {event.subject} on {due_str}."
             self.found_event_btn.configure(text=event_str)
@@ -285,31 +294,41 @@ class StudyManagerApp():
             for event in self.events:
                 # Replaces the new lines in description with a placemarker
                 format_description = event.description.replace('\n', '\\n')
-                text_file.write(f"{event.subject}|{event.type}|{format_description}|{event.due_date}\n")
+                text_file.write(f"{event.subject}|{event.type}|"+
+                                "{format_description}|{event.due_date}\n")
         messagebox.showinfo("Saved!", "File saved successfully!")
         
     def load_data(self):
         """Load the saved .txt file"""
-        filepath = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+        filepath = filedialog.askopenfilename(filetypes=
+                                              [("Text Files", "*.txt")])
         self.events=[]
 
         # Processes saved data and adds it to event list
+        try:
+            with open(filepath, "r") as file:
+                for line in file:
+                    line=line.strip()
+                    parts = line.split("|")
 
-        with open(filepath, "r") as file:
-            for line in file:
-                line=line.strip()
-                parts = line.split("|")
+                    subject, event_type, description, due_date = parts
+                    description = description.replace("\\n", "\n")
 
-                subject, event_type, description, due_date = parts
-                description = description.replace("\\n", "\n")
+                    self.events.append(Event(subject=subject,
+                                             event_type=event_type,
+                                             description=description,
+                                             due_date=due_date))
 
-                self.events.append(Event(subject=subject, event_type=event_type, description=description, due_date=due_date))
-
-        # Add events to the tab based on what user is on
-        if self.focus_tab == True:
-            self.event_to_db()
-        else:
-            self.view_all_tasks()
+                    # Add events to the tab based on what user is on
+                    if self.focus_tab == True:
+                        self.event_to_db()
+                    else:
+                        self.view_all_tasks()
+        except ValueError:
+            messagebox.showerror("Error with .txt file", "There is an error"+
+                                 " with the .txt file. Ensure it is the "+
+                                 "correct file and/or there are no changes"+
+                                 " to it.")       
 
     def view_all_tasks(self):
         """Show all the events added in the manager."""
@@ -358,47 +377,53 @@ class StudyManagerApp():
         self.db_button.pack(padx=20, side="left")
 
         self.add_task_button = ctk.CTkButton(self.button_frame,
-                                             text="+ Add Task",
-                                             corner_radius=10,
-                                             fg_color="#5DAC70",
-                                             text_color=self.text_colour,
-                                             height=50,
-                                             width=90, 
-                                             command=lambda: self.to_add_task())
+                                text="+ Add Task",
+                                corner_radius=10,
+                                fg_color="#5DAC70",
+                                text_color=self.text_colour,
+                                height=50,
+                                width=90, 
+                                command=lambda: self.to_add_task())
         self.add_task_button.pack(side="right", padx=10, pady=15)
         self.add_task_button.configure(state=NORMAL)
 
         # Sets up the 3 main scrollable frames
         self.left_frame = ctk.CTkScrollableFrame(self.app_frame,
-                                                 orientation="vertical",
-                                                 fg_color=self.background,
-                                                 label_text="Imminent",
-                                                 label_text_color=self.text_colour,
-                                                 label_fg_color=self.background,
-                                                 label_font=scroll_label_font,)
-        self.left_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
+                                orientation="vertical",
+                                fg_color=self.background,
+                                label_text="Imminent",
+                                label_text_color=self.text_colour,
+                                label_fg_color=self.background,
+                                label_font=scroll_label_font,)
+        self.left_frame.pack(side="left", fill="both", expand=True,
+                             padx=1, pady=20)
 
         self.mid_frame = ctk.CTkScrollableFrame(self.app_frame,
-                                                orientation="vertical",
-                                                fg_color=self.background,
-                                                label_text="Close",
-                                                label_text_color=self.text_colour,
-                                                label_fg_color=self.background,
-                                                label_font=scroll_label_font)
-        self.mid_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
+                            orientation="vertical",
+                            fg_color=self.background,
+                            label_text="Close",
+                            label_text_color=self.text_colour,
+                            label_fg_color=self.background,
+                            label_font=scroll_label_font)
+        self.mid_frame.pack(side="left", fill="both",
+                            expand=True, padx=1, pady=20)
 
         self.right_frame = ctk.CTkScrollableFrame(self.app_frame,
-                                                  orientation="vertical",
-                                                  fg_color=self.background,
-                                                  label_text="Far",
-                                                  label_text_color=self.text_colour,
-                                                  label_fg_color=self.background,
-                                                  label_font=scroll_label_font)
-        self.right_frame.pack(side="left", fill="both", expand=True, padx=1, pady=20)
+                            orientation="vertical",
+                            fg_color=self.background,
+                            label_text="Far",
+                            label_text_color=self.text_colour,
+                            label_fg_color=self.background,
+                            label_font=scroll_label_font)
+        self.right_frame.pack(side="left", fill="both",
+                              expand=True, padx=1, pady=20)
 
         today = datetime.today().date()
         # Sorts events based on earliest date in a list
-        earliest_events = sorted(self.events, key=lambda event: datetime.strptime(event.due_date, "%m/%d/%y"))
+        earliest_events = sorted(self.events, 
+                                 key=lambda event: 
+                                     datetime.strptime(event.due_date,
+                                                       "%m/%d/%y"))
 
         # Adds every event to UI
         for event in earliest_events:
@@ -480,7 +505,8 @@ class StudyManagerApp():
                 due_label.configure(text=f"{due_str} -- Due TODAY!")
             elif days_remain < 0:
                 overdue_days = (today-event_date).days
-                due_label.configure(text=f"{due_str} -- OVERDUE by {overdue_days} day(s)!")
+                due_label.configure(text=f"{due_str} -- OVERDUE by"+
+                                    " {overdue_days} day(s)!")
 
     def to_db(self):
         """Wipe tab and create dashboard."""
@@ -587,6 +613,7 @@ class DisplayAddTask():
         background = self.colours[0]
         text_colour = self.colours[2]
 
+        bold_font = font.Font(family="Helvetica", size=18, weight="bold")
         med_font = font.Font(family="Helvetica", size=16)
         ctk_med_font = ctk.CTkFont(family="Helvetica", size=16)
         small_font = font.Font(family="Helvetica", size=14)
@@ -602,7 +629,8 @@ class DisplayAddTask():
         self.add_task_gui.geometry("700x550")
         self.add_task_gui.configure(bg=background)
 
-        partner.add_task_button.configure(state=DISABLED)  # Disables add task button
+        # Disables add task button
+        partner.add_task_button.configure(state=DISABLED)
         # if user presses 'x', delete window
         self.add_task_gui.protocol("WM_DELETE_WINDOW",
                                lambda: self.close_add_task(partner))
@@ -610,7 +638,7 @@ class DisplayAddTask():
         # Creates UI
         title_label = Label(self.add_task_gui,
                             text=action_text,
-                            font=font.Font(family="Helvetica", size=18, weight="bold"),
+                            font=bold_font,
                             bg=background,
                             fg=text_colour)
         title_label.pack(pady=20)
@@ -619,7 +647,8 @@ class DisplayAddTask():
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
         self.left_side_frame = Frame(self.main_frame, bg=background)
-        self.left_side_frame.pack(side="left", fill="both", expand=True, padx=20)
+        self.left_side_frame.pack(side="left", fill="both",
+                                  expand=True, padx=20)
 
         self.task_type_label = Label(self.left_side_frame,
                                      text="Choose type of task:",
@@ -630,8 +659,14 @@ class DisplayAddTask():
 
         self.rad_var = StringVar()
         for choice in ["Exam", "Assignment", "Homework", "Study Session"]:
-            self.rad_option = Radiobutton(self.left_side_frame, text=choice, variable=self.rad_var, value=choice,
-                        font=small_font, bg=background, anchor="w", fg=text_colour)
+            self.rad_option = Radiobutton(self.left_side_frame,
+                                          text=choice,
+                                          variable=self.rad_var,
+                                          value=choice,
+                                          font=small_font,
+                                          bg=background,
+                                          anchor="w",
+                                          fg=text_colour)
             self.rad_option.pack(anchor="w")
         if event:
             self.rad_var.set(event.type)
@@ -669,10 +704,12 @@ class DisplayAddTask():
         # if not, optional
         else:
             self.description_entry.insert("1.0", "Optional")
-            self.description_entry.bind('<FocusIn>', lambda event: self.on_entry_click(event))
+            self.description_entry.bind('<FocusIn>',lambda event: 
+                self.on_entry_click(event))
 
         self.right_side_frame = Frame(self.main_frame, bg=background)
-        self.right_side_frame.pack(side="right", fill="both", expand=True, padx=20)
+        self.right_side_frame.pack(side="right", fill="both",
+                                   expand=True, padx=20)
 
         self.due_date_lb = Label(self.right_side_frame,
                                  text="Set Due Date",
@@ -688,8 +725,8 @@ class DisplayAddTask():
         partner.change_cal_colour(self.cal)  # Choose dark of light colours
         self.cal.pack(pady=10)
         if event:
-            self.cal.selection_set(datetime.strptime(event.due_date, "%m/%d/%y"))
-
+            self.cal.selection_set(datetime.strptime(event.due_date,
+                                                     "%m/%d/%y"))
 
         submit_button = ctk.CTkButton(self.add_task_gui, 
                                       text=action_text,
@@ -729,9 +766,12 @@ class DisplayAddTask():
             self.event.due_date = due_date
         # Adding new task
         else:
-            new_event = Event(subject=subject, event_type=task_type, description=description, due_date=due_date)
+            new_event = Event(subject=subject, event_type=task_type,
+                              description=description, due_date=due_date)
             partner.events.append(new_event)
-            print(f"Task: {new_event.subject}, ({new_event.type}), Due: {new_event.due_date}, Description: {new_event.description}")
+            print(f"Task: {new_event.subject}, ({new_event.type}), "
+                  +"Due: {new_event.due_date}, "
+                  +"Description: {new_event.description}")
 
         # Refresh correct tab
         if partner.focus_tab == True:
@@ -748,7 +788,9 @@ class DisplayAddTask():
 
     def close_add_task(self, partner):
         """Close Add Task GUI and enable the button"""
-        partner.add_task_button.configure(state=NORMAL)  # Enables add task button
+        # Enables add task button
+        partner.add_task_button.configure(state=NORMAL)
+
         self.add_task_gui.destroy()  # Destroys window
 
 class Event():
