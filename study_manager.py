@@ -252,7 +252,7 @@ class StudyManagerApp():
             elif days_remain < 0:
                 overdue_days = (today-event_date).days
                 due_label.configure(text=f"{due_str} -- OVERDUE by"+
-                                    " {overdue_days} day(s)!")
+                                    f" {overdue_days} day(s)!")
 
         # When only 1 event is logged, tell user
         if count == 1:
@@ -279,7 +279,7 @@ class StudyManagerApp():
             # if multiple events are on the same day
             if len(found_event) > 1:
                 event_str = (f"Multiple events on this day. Here is one: "+
-                "\n{event.type} for {event.subject} on {due_str}.")
+                f"\n{event.type} for {event.subject} on {due_str}.")
             else:
                 event_str = f"{event.type} for {event.subject} on {due_str}."
             self.found_event_btn.configure(text=event_str)
@@ -295,17 +295,17 @@ class StudyManagerApp():
                 # Replaces the new lines in description with a placemarker
                 format_description = event.description.replace('\n', '\\n')
                 text_file.write(f"{event.subject}|{event.type}|"+
-                                "{format_description}|{event.due_date}\n")
+                                f"{format_description}|{event.due_date}\n")
         messagebox.showinfo("Saved!", "File saved successfully!")
         
     def load_data(self):
         """Load the saved .txt file"""
+
         filepath = filedialog.askopenfilename(filetypes=
                                               [("Text Files", "*.txt")])
         self.events=[]
-
-        # Processes saved data and adds it to event list
         try:
+            # Processes saved data and adds it to event list
             with open(filepath, "r") as file:
                 for line in file:
                     line=line.strip()
@@ -314,21 +314,27 @@ class StudyManagerApp():
                     subject, event_type, description, due_date = parts
                     description = description.replace("\\n", "\n")
 
+                    try:
+                        datetime.strptime(due_date, "%m/%d/%y")
+                    except ValueError:
+                        raise ValueError()
+
                     self.events.append(Event(subject=subject,
                                              event_type=event_type,
                                              description=description,
                                              due_date=due_date))
-
-                    # Add events to the tab based on what user is on
-                    if self.focus_tab == True:
-                        self.event_to_db()
-                    else:
-                        self.view_all_tasks()
         except ValueError:
             messagebox.showerror("Error with .txt file", "There is an error"+
                                  " with the .txt file. Ensure it is the "+
                                  "correct file and/or there are no changes"+
                                  " to it.")       
+            return
+        
+        # Add events to the tab based on what user is on
+        if self.focus_tab == True:
+            self.event_to_db()
+        else:
+            self.view_all_tasks()
 
     def view_all_tasks(self):
         """Show all the events added in the manager."""
@@ -506,7 +512,7 @@ class StudyManagerApp():
             elif days_remain < 0:
                 overdue_days = (today-event_date).days
                 due_label.configure(text=f"{due_str} -- OVERDUE by"+
-                                    " {overdue_days} day(s)!")
+                                    f" {overdue_days} day(s)!")
 
     def to_db(self):
         """Wipe tab and create dashboard."""
@@ -770,8 +776,8 @@ class DisplayAddTask():
                               description=description, due_date=due_date)
             partner.events.append(new_event)
             print(f"Task: {new_event.subject}, ({new_event.type}), "
-                  +"Due: {new_event.due_date}, "
-                  +"Description: {new_event.description}")
+                  +f"Due: {new_event.due_date}, "
+                  +f"Description: {new_event.description}")
 
         # Refresh correct tab
         if partner.focus_tab == True:
