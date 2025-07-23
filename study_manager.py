@@ -6,6 +6,9 @@ from datetime import datetime
 import customtkinter as ctk
 from tkcalendar import Calendar
 
+RED_COLOUR = "#AD4849"
+YELLOW_COLOUR = "#CFB353"
+GREEN_COLOUR = "#5DAC70"
 
 class StudyManagerApp():
     """Main application class for study manager."""
@@ -13,12 +16,21 @@ class StudyManagerApp():
     def create_db_gui(self):
         """Create the UI of the dashboard.
 
+        By placing buttons and other items all within
+        the app_frame, which acts as the 'main' container in the root window
         """
         # Configures the window
         root.geometry("850x600")
         root.configure(bg="#313131")
         root.grid_columnconfigure(0, weight=1)
         root.grid_rowconfigure(0, weight=1)
+
+        # Grids and configures main frame layout for aesthetics
+        self.app_frame.grid(sticky=NSEW)
+        self.app_frame.grid_columnconfigure(0, weight=1)
+        self.app_frame.grid_columnconfigure(1, weight=1)
+        self.app_frame.grid_rowconfigure(2, weight=0)
+        self.app_frame.grid_rowconfigure(3, weight=0)
 
         self.focus_tab = True
 
@@ -161,7 +173,11 @@ class StudyManagerApp():
         self.found_event_btn.grid(row=1, column=0, pady=50, sticky="s")
 
     def __init__(self):
-        """Initialize main frame and colour theme."""
+        """Initialize main frame and colour theme.
+
+        Setting the colour variables for the theme and creating and
+        configuring the main container to hold dashboard items.
+        """
         # Sets colour theme for different mode
         self.light_mode = ["#F8F5F2", "#F5F5F5", "#000000", "Dark Mode"]
         self.dark_mode = ["#313131", "#494444", "#FFFFFF",  "Light Mode"]
@@ -171,22 +187,25 @@ class StudyManagerApp():
         self.text_colour = self.colours[2]
         self.change_colour_txt = self.colours[3]
 
-        # Creates main frame and configures grid layout for aesthetics
+        # Creates main frame and event list
         self.app_frame = Frame(bg=self.background)
-        self.app_frame.grid(sticky=NSEW)
-        self.app_frame.grid_columnconfigure(0, weight=1)
-        self.app_frame.grid_columnconfigure(1, weight=1)
-        self.app_frame.grid_rowconfigure(2, weight=0)
-        self.app_frame.grid_rowconfigure(3, weight=0)
         self.events = []
+
         self.create_db_gui()  # Calls to create the dashboard GUI
 
     def to_add_task(self):
-        """Open Add Task window for creating a new task."""
+        """Open Add Task window for creating a new task.
+
+        By calling the DisplayAddTask class.
+        """
         DisplayAddTask(self, None)
     
     def event_to_db(self):
-        """Refresh the dashboard page showing new events."""
+        """Refresh the dashboard page showing new events.
+
+        By wiping previous content in DB frames, sorting the events in due
+        date order, then placing event contents in DB frame
+        """
         # Clears all the content in the DB frames
         if self.events:
             for frame in [self.db_task_frame, self.db2_task_frame]:
@@ -210,11 +229,11 @@ class StudyManagerApp():
 
             # Change colour based on importancy
             if days_remain <= 3:
-                alert_colour = "#AD4849"
+                alert_colour = RED_COLOUR
             elif days_remain >= 4 and days_remain <= 7:
-                alert_colour = "#CFB353"
+                alert_colour = YELLOW_COLOUR
             else:
-                alert_colour = "#5DAC70"
+                alert_colour = GREEN_COLOUR
 
             if count == 1:
                 frame = self.db_task_frame
@@ -262,7 +281,11 @@ class StudyManagerApp():
                   fg=self.text_colour).grid(pady=10, padx=10)
 
     def cal_show_task(self):
-        """Display event info for selected calendar date."""
+        """Display event info for selected calendar date.
+
+        By comparing the selected date on the calendar to the due dates of all
+        events, then updating the label to match a found event.
+        """
         date = self.cal.get_date()
         found_event = []
 
@@ -288,7 +311,11 @@ class StudyManagerApp():
             self.found_event_btn.configure(text="No event found on that day.")
 
     def save_data(self):
-        """Save all events as a .txt file."""
+        """Save all events as a .txt file.
+
+        By formatting all the events in a list as a line of a .txt file
+        separating it's contents with '|', and formatting the description.
+        """
         # saves file as shown .txt
         with open('study_manager.txt', 'w') as text_file:
             for event in self.events:
@@ -299,7 +326,12 @@ class StudyManagerApp():
         messagebox.showinfo("Saved!", "File saved successfully!")
         
     def load_data(self):
-        """Load the saved .txt file"""
+        """Load the saved .txt file
+
+        By reading the file and finding the separator: '|' and adding each
+        piece of content in between as a item in a list. Then reformatting the
+        description, and adding all the variables to a single event.
+        """
 
         filepath = filedialog.askopenfilename(filetypes=
                                               [("Text Files", "*.txt")])
@@ -337,7 +369,11 @@ class StudyManagerApp():
             self.view_all_tasks()
 
     def view_all_tasks(self):
-        """Show all the events added in the manager."""
+        """Show all the events added in the manager.
+
+        By wiping everything in the main container and rebuilding a new UI
+        through the app_frame, showcasing all added events.
+        """
         # Wipe everything in the app frame
         for widget in self.app_frame.winfo_children():
             widget.destroy()
@@ -515,7 +551,11 @@ class StudyManagerApp():
                                     f" {overdue_days} day(s)!")
 
     def to_db(self):
-        """Wipe tab and create dashboard."""
+        """Wipe tab and create dashboard.
+
+        By wiping the main container and calling the create_db_gui() to
+        rebuild the DB UI, and event_to_db to add events to the dashboard.
+        """
         for widget in self.app_frame.winfo_children():
             widget.destroy()
 
@@ -523,11 +563,19 @@ class StudyManagerApp():
         self.event_to_db()
 
     def to_edit_task(self, event):
-        """Call class with event."""
+        """Open Add Task window, passing an event to edit
+
+        By calling the DisplayAddTask class with the selected user event
+        to edit.
+        """
         DisplayAddTask(self, event)
        
     def delete_task(self, event):
-        """Delete user chosen event."""
+        """Delete user chosen event.
+
+        By removing the event from the event list and refreshing whatever
+        tab is currently opened.
+        """
         # Remove event if in list
         if event in self.events:
             self.events.remove(event)
@@ -539,7 +587,12 @@ class StudyManagerApp():
             self.view_all_tasks()
 
     def switch_colour(self):
-        """Switch colour theme of application."""
+        """Switch colour theme of application.
+
+        By checking to see what the current theme is, and changing it
+        accordingly. Then deletes and creates main frame to change colour
+        theme and refreshes the appropriate tab.
+        """
         # Switches to opposite colour theme
         if self.colours == self.light_mode:
             self.colours = self.dark_mode
@@ -554,11 +607,6 @@ class StudyManagerApp():
         # Resets app frame with new colour
         self.app_frame.destroy()
         self.app_frame = Frame(root, bg=self.background)
-        self.app_frame.grid(sticky=NSEW)
-        self.app_frame.grid_columnconfigure(0, weight=1)
-        self.app_frame.grid_columnconfigure(1, weight=1)
-        self.app_frame.grid_rowconfigure(2, weight=0)
-        self.app_frame.grid_rowconfigure(3, weight=0)
 
         # Refresh the correct tab
         if self.focus_tab:
@@ -568,7 +616,11 @@ class StudyManagerApp():
             self.view_all_tasks()
 
     def change_cal_colour(self, cal):
-        """Change colour of calendar based on dark or light mode"""
+        """Change colour of calendar based on dark or light mode
+        
+        By configuring the calendars variables based on the current colour
+        theme.
+        """
         if self.colours == self.dark_mode:
             cal.configure(background='#2e2e2e',
                                foreground='white',
@@ -746,7 +798,10 @@ class DisplayAddTask():
         submit_button.pack(pady=20)
 
     def add_task(self, partner):
-        """Adds event to class."""
+        """Adds event to class.
+
+        By getting the inputted values and creating an event with them.
+        """
         # Get user input values
         task_type = self.rad_var.get()
         subject = self.subject_entry.get()
@@ -787,13 +842,22 @@ class DisplayAddTask():
         self.close_add_task(partner)
     
     def on_entry_click(self, event):
-        """Remove optional text when user clicks description"""
+        """Remove optional text when user clicks description
+
+        By seeing if the user has not clicked it yet using a True, False
+        'counter' and deleting the descriptions content if it's the user's
+        first time.
+        """
         if self.firstclick:
             self.firstclick = False
             self.description_entry.delete("1.0", "end") 
 
     def close_add_task(self, partner):
-        """Close Add Task GUI and enable the button"""
+        """Close Add Task GUI and enable the button
+
+        By letting the add_task button work again and completely destroying
+        the window.
+        """
         # Enables add task button
         partner.add_task_button.configure(state=NORMAL)
 
