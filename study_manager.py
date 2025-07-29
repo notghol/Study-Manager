@@ -9,6 +9,7 @@ from tkcalendar import Calendar
 RED_COLOUR = "#AD4849"
 YELLOW_COLOUR = "#CFB353"
 GREEN_COLOUR = "#5DAC70"
+BLACK_COLOUR = "#000000"
 
 class StudyManagerApp():
     """Main application class for study manager."""
@@ -33,9 +34,6 @@ class StudyManagerApp():
         self.app_frame.grid_rowconfigure(3, weight=0)
 
         self.focus_tab = True
-
-        red_alert = "#AD4849"
-        yellow_alert = "#CFB353"
 
         large_font = font.Font(family="Helvetica", size=14)
 
@@ -91,31 +89,31 @@ class StudyManagerApp():
 
         self.db_task_frame = ctk.CTkFrame(self.db_holder,
                                           corner_radius=20,
-                                          fg_color=red_alert,
+                                          fg_color=RED_COLOUR,
                                           width=350,
                                           height=130,
-                                          border_color="black",
+                                          border_color=BLACK_COLOUR,
                                           border_width=1)
         self.db_task_frame.grid(row=0, column=0, padx=20, pady=10, sticky="w")
         self.db_task_frame.grid_propagate(False)
         Label(self.db_task_frame,
               text="No upcoming events.",
-              bg=red_alert,
+              bg=RED_COLOUR,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.db2_task_frame = ctk.CTkFrame(self.db_holder,
                                            corner_radius=20,
-                                           fg_color=yellow_alert,
+                                           fg_color=YELLOW_COLOUR,
                                            width=350,
                                            height=130,
-                                           border_color="black",
+                                           border_color=BLACK_COLOUR,
                                            border_width=1)
         self.db2_task_frame.grid(row=1, column=0, padx=20,
                                  pady=10, sticky="w")
         self.db2_task_frame.grid_propagate(False)
         Label(self.db2_task_frame,
               text="No upcoming events.",
-              bg=yellow_alert,
+              bg=YELLOW_COLOUR,
               fg=self.text_colour).grid(pady=10, padx=10)
 
         self.color_switch_btn = ctk.CTkButton(self.db_holder,
@@ -125,7 +123,7 @@ class StudyManagerApp():
                             text_color=self.text_colour,
                             width=260,
                             height=60,
-                            border_color="#000000",
+                            border_color=BLACK_COLOUR,
                             border_width=1,
                             command=lambda: self.switch_colour())
         self.color_switch_btn.grid(row=2, column=0, padx=20,
@@ -134,7 +132,7 @@ class StudyManagerApp():
         self.add_task_button = ctk.CTkButton(self.button_frame,
                             text="+ Add Task",
                             corner_radius=10,
-                            fg_color="#5DAC70",
+                            fg_color=GREEN_COLOUR,
                             text_color=self.text_colour,
                             height=50,
                             width=90,
@@ -166,7 +164,7 @@ class StudyManagerApp():
                             height=60,
                             fg_color="#456D98",
                             text_color=self.text_colour,
-                            border_color="#000000",
+                            border_color=BLACK_COLOUR,
                             border_width=1,
                             corner_radius=10,
                             command=lambda: self.cal_show_task())
@@ -179,7 +177,7 @@ class StudyManagerApp():
         configuring the main container to hold dashboard items.
         """
         # Sets colour theme for different mode
-        self.light_mode = ["#F8F5F2", "#F5F5F5", "#000000", "Dark Mode"]
+        self.light_mode = ["#F8F5F2", "#F5F5F5", BLACK_COLOUR, "Dark Mode"]
         self.dark_mode = ["#313131", "#494444", "#FFFFFF",  "Light Mode"]
         self.colours = self.light_mode
         self.background = self.colours[0]
@@ -199,12 +197,12 @@ class StudyManagerApp():
         By calling the DisplayAddTask class.
         """
         DisplayAddTask(self, None)
-    
+
     def event_to_db(self):
         """Refresh the dashboard page showing new events.
 
         By wiping previous content in DB frames, sorting the events in due
-        date order, then placing event contents in DB frame
+        date order, then placing event contents in DB frame.
         """
         # Clears all the content in the DB frames
         if self.events:
@@ -339,6 +337,7 @@ class StudyManagerApp():
         try:
             # Processes saved data and adds it to event list
             with open(filepath, "r") as file:
+                # Reads each line in the file
                 for line in file:
                     line=line.strip()
                     parts = line.split("|")
@@ -361,6 +360,9 @@ class StudyManagerApp():
                                  "correct file and/or there are no changes"+
                                  " to it.")       
             return
+        except FileNotFoundError:
+            messagebox.showerror("File Not Found", "No file was selected.")
+            return
         
         # Add events to the tab based on what user is on
         if self.focus_tab == True:
@@ -382,7 +384,7 @@ class StudyManagerApp():
 
         self.focus_tab = False
 
-        scroll_label_font = ("Helvetica", 16, "bold")
+        SCROLL_LABEL_FONT = ("Helvetica", 16, "bold")
 
         # Sets up button frame and creates buttons
         self.button_frame = Frame(self.app_frame, bg=self.background)
@@ -421,7 +423,7 @@ class StudyManagerApp():
         self.add_task_button = ctk.CTkButton(self.button_frame,
                                 text="+ Add Task",
                                 corner_radius=10,
-                                fg_color="#5DAC70",
+                                fg_color=GREEN_COLOUR,
                                 text_color=self.text_colour,
                                 height=50,
                                 width=90, 
@@ -436,7 +438,7 @@ class StudyManagerApp():
                                 label_text="Imminent",
                                 label_text_color=self.text_colour,
                                 label_fg_color=self.background,
-                                label_font=scroll_label_font,)
+                                label_font=SCROLL_LABEL_FONT,)
         self.left_frame.pack(side="left", fill="both", expand=True,
                              padx=1, pady=20)
 
@@ -446,7 +448,7 @@ class StudyManagerApp():
                             label_text="Close",
                             label_text_color=self.text_colour,
                             label_fg_color=self.background,
-                            label_font=scroll_label_font)
+                            label_font=SCROLL_LABEL_FONT)
         self.mid_frame.pack(side="left", fill="both",
                             expand=True, padx=1, pady=20)
 
@@ -456,7 +458,7 @@ class StudyManagerApp():
                             label_text="Far",
                             label_text_color=self.text_colour,
                             label_fg_color=self.background,
-                            label_font=scroll_label_font)
+                            label_font=SCROLL_LABEL_FONT)
         self.right_frame.pack(side="left", fill="both",
                               expand=True, padx=1, pady=20)
 
@@ -477,19 +479,19 @@ class StudyManagerApp():
             
             # Chooses what frame to put event in
             if days_remain <= 3:
-                alert_colour = "#AD4849"
+                alert_colour = RED_COLOUR
                 date_frame = self.left_frame
 
             elif days_remain >= 4 and days_remain <= 7:
-                alert_colour = "#CFB353"
+                alert_colour = YELLOW_COLOUR
                 date_frame = self.mid_frame
             else:
-                alert_colour = "#5DAC70"
+                alert_colour = GREEN_COLOUR
                 date_frame = self.right_frame
 
             event_frame = ctk.CTkFrame(date_frame,
                                        corner_radius=20,
-                                       border_color="black",
+                                       border_color=BLACK_COLOUR,
                                        border_width=1,
                                        width=300,
                                        height=110,
@@ -787,7 +789,7 @@ class DisplayAddTask():
                                                      "%m/%d/%y"))
 
         submit_button = ctk.CTkButton(self.add_task_gui, 
-                                      text=action_text,
+                                      text="Submit",
                                       corner_radius=10,
                                       command=lambda: self.add_task(partner),
                                       font=ctk_med_font,
@@ -814,6 +816,11 @@ class DisplayAddTask():
             return
         if subject == "":
             messagebox.showerror("Missing Info", "Please enter a subject.")
+            return
+        # Checks if the subject is too long so it does not overflow
+        elif len(subject) > 26:
+            messagebox.showerror("Subject Too Long",
+                                 "Subject must be less than 27 characters.")
             return
         # If the user does not click description box at all
         if description.strip() == "Optional":
